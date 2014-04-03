@@ -26,8 +26,8 @@ output
     texths hstore,
     -- common columns:
     active smallint NOT NULL DEFAULT 1,
-    lastupdatedby character varying(40),
-    lastupdateon timestamp without time zone,
+    modifiedby character varying(40),
+    modifiedon timestamp without time zone,
     createdon timestamp without time zone,
     createdby character varying(40),
     rowversionstamp integer NOT NULL DEFAULT 1,
