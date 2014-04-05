@@ -22,6 +22,8 @@ output
     -- Table company
     CREATE TABLE company
     (
+    id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	seq serial,
     company varchar(10) NOT NULL,
     texths hstore,
     -- common columns:
@@ -30,7 +32,7 @@ output
     modifiedon timestamp without time zone,
     createdon timestamp without time zone,
     createdby character varying(40),
-    rowversionstamp integer NOT NULL DEFAULT 1,
+    rowversion integer NOT NULL DEFAULT 1,
     CONSTRAINT pk_company PRIMARY KEY (id)
     );
 

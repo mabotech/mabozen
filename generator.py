@@ -20,7 +20,9 @@ class Gen(object):
         """
         def __init__(self):
                 
-                fh = open("models/organization.json","r")
+                fn = "models/models_20140405210657.json"
+                #"models/organization.json"
+                fh = open(fn,"r")
                 
                 models = fh.read()
 
@@ -35,7 +37,7 @@ class Gen(object):
 
                 env = Environment(loader=loader, trim_blocks=True, lstrip_blocks = True)
 
-                template = env.get_template('pg_create_table.sql')
+                template = env.get_template('pg_create_table3.sql')
 
                 v = template.render(tables=tables)
                 
