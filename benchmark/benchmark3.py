@@ -61,7 +61,7 @@ if __name__ == "__main__":
 
     connString = "port=6432 dbname=maboss user=mabotech password=mabouser"
     db = pg.Pg(connString)    
-    n = 100
+    n = 10
     
     benchmark(db, n)
     benchmark(db, n)
