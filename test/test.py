@@ -27,13 +27,15 @@ def test_find():
                     "offset": "0",
                     "limit": "3" }
     
-    sql = "select find_cf1 as result from find_cf1('%s')" %(json.dumps(params) )
+    sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
     
-    #print(  sql )
+    print(  sql )
     
     db.execute(sql)
     
     rtn = db.fetchone()
+    
+    print(rtn)
     
     assert rtn[0]['count'] == 3
     

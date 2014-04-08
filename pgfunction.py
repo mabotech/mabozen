@@ -99,7 +99,7 @@ LEFT JOIN pg_language l ON p.prolang=l.oid
         backup function from pg
         """
         
-        functions = ["mtp_delete_cf1"]
+        functions = ["mtp_find_active_cf1"]
         
         for fname in functions:
             
