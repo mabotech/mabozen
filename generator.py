@@ -52,7 +52,8 @@ class Gen(object):
                 fn = "output/pg_ddl_%s.sql" % ( h)
                 
                 if os.path.exists(fn):
-                    print "ddl exists"
+                    print (fn)
+                    print ("ddl exists")
                 else:
                     print "gen %s" % (h)
 
