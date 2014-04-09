@@ -44,13 +44,13 @@ class TestCommonFunction(unittest.TestCase):
         """
         
         params= {  "table": "company",
-                        "filter": "seq < 100",
+                        "filter": "seq > 100 and active = 1",
                         "cols": ["id", "seq", "createdby"],
                         "orderby": "2",
                         "offset": "0",
                         "limit": "3" }
         
-        sql = "select find_cf1 as result from find_cf1('%s')" %(json.dumps(params) )
+        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
         
         #print(  sql )
         

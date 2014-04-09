@@ -22,7 +22,7 @@ class TestMtpFind(unittest.TestCase):
         """
         
         params= {  "table": "company",
-                        "filter": "seq > 1",
+                        "filter": "seq < 1",
                         "cols": ["id", "seq", "createdby"],
                         "orderby": "2",
                         "offset": "0",

@@ -19,19 +19,20 @@
           }
           json = {
             "table": "company",
-            "filter": "seq < 100",
+            "filter": "seq > 100",
             "cols": ["id", "seq", "createdon"],
             "orderby": "2",
             "offset": "10",
             "limit": "3"
           };
           json_str = JSON.stringify(json);
-          sql = "select find_cf1 as result from find_cf1('" + json_str + "')";
-          return client.query(sql, function(err, result) {
+          sql = "select mtp_find_cf1 as result from mtp_find_cf1('" + json_str + "')";
+          return client.query(sql, function(err, rtn) {
             if (err) {
-              console.error('could not connect to postgres', err);
+              console.error('query error', err);
             }
-            console.log(result.rows[0].result);
+            rtn.rows[0].result.count.should.equal(3);
+            console.log(rtn.rows[0].result);
             client.end();
             return done();
           });

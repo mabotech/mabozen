@@ -1,4 +1,7 @@
 var pg = require('pg');
+
+require("should");
+
 //or native libpq bindings
 //var pg = require('pg').native
 
@@ -6,7 +9,7 @@ describe('mabozen', function() {
 
     describe('function call', function() {
 
-        it('find_cf1 should success', function(done) {
+        it('mtp_find_cf1 should success', function(done) {
 
             var conString = "postgres://mabotech:mabouser@127.0.0.1:6432/maboss";
 
@@ -19,7 +22,7 @@ describe('mabozen', function() {
 
                 var json = {
                     "table": "company",
-                    "filter": "seq < 100",
+                    "filter": "seq > 100",
                     "cols": ["id", "seq", "createdby"],
                     "orderby": "2",
                     "offset": "0",
@@ -28,14 +31,15 @@ describe('mabozen', function() {
 
                 var json_str = JSON.stringify(json);
 
-                var sql = "select find_cf1 as result from find_cf1('" + json_str + "')";
+                var sql = "select mtp_find_cf1 as result from mtp_find_cf1('" + json_str + "')";
 
                 client.query(sql, function(err, result) {
                     if (err) {
                         return console.error('error running query', err);
                     }
-                    console.log(result.rows[0].result);
-                    //output: Tue Jan 15 2013 19:12:47 GMT-600 (CST)
+
+                    result.rows[0].result.count.should.equal(3);
+                    
                     client.end();
                     done();
                 });
