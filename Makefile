@@ -1,12 +1,14 @@
-TESTS = test/test_*.js
-TIMEOUT = 10
+
+ALL: ;
 
 test:
 	mocha -R spec
+	py.test
+
+benchmark:
+	python benchmark/benchmark3.py
 
 nose:
 	nosetests -v -x
-#	$(TESTS)
-#	mocha  -R html-cov > coverage.html
 
-.PHONY: test
+.PHONY: test benchmark

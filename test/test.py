@@ -21,7 +21,7 @@ def teardown_func():
 def test_find():  
     
     params= {  "table": "company",
-                    "filter": "seq < 100",
+                    "filter": "seq > 100",
                     "cols": ["id", "seq", "createdby"],
                     "orderby": "2",
                     "offset": "0",

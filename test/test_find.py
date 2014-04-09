@@ -40,3 +40,6 @@ class TestFind(unittest.TestCase):
         
         assert 'id' in rtn[0]['result'][0]
         
+
+if __name__ == '__main__':
+    unittest.main()
