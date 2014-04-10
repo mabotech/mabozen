@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+"""
+pg schema to json [model]
+"""
 
 import json
 
@@ -15,31 +20,33 @@ pg schema extractor
 
 class Extractor(object):
    
-    """
-    init db
-    """
     def __init__(self):
+        """
+        init db
+        """
         
-        connString = "port=6432 dbname=maboss user=mabotech password=mabouser"
-        self.db = Pg(connString)
+        conn_string = "port=6432 dbname=maboss user=mabotech password=mabouser"
+        self.dbi = Pg(conn_string)
         
-    """
-    save to json file
-    """
+
     def save(self, models):
+        """
+        save to json file
+        """
+        filename = "models/models_%s.json" % (strftime("%Y%m%d%H%M%S", localtime()))
         
-        fn = "models/models_%s.json" % (strftime("%Y%m%d%H%M%S", localtime()))
-        fh = open(fn, 'w')
-        json_str = json.dumps(models)
-        
-        fh.write(json_str)
-        
-        fh.close()
-       
-    """
-    build dict
-    """
+        with open(filename, 'w') as fileh:
+            
+            json_str = json.dumps(models)
+            
+            fileh.write(json_str)
+
+
     def build(self, table_name, cols):
+        """
+        build dict
+        """
+    
         """
         {"table":"company",
 "properties":[
@@ -50,37 +57,58 @@ class Extractor(object):
         """
         
         tab = {"table":table_name}
+        
         tab["properties"] = []
+        
         for col in cols:
-            v = {}
-            v["name"] = col["column_name"]
-            v["column"] = col["column_name"]
+            
+            # convert
+                        
+            attr = {}
+            
+            attr["name"] = col["column_name"]
+            
+            attr["column"] = col["column_name"]
+            
             if col["udt_name"] == "varchar":
-                v["type"] = "%s(%s)" % ( col["udt_name"], col["character_maximum_length"]  )
+                attr["type"] = "%s(%s)" % ( col["udt_name"], col["character_maximum_length"]  )
             else:
-                v["type"] = col["udt_name"]
+                attr["type"] = col["udt_name"]
                 
             if col["is_nullable"] == "NO":
-                 v["required"] = True
+                 attr["required"] = True
             
-            tab["properties"].append(v)
-            
+            tab["properties"].append(attr)           
         
-        return tab
+        return tab            
+    
+    def get_tables_from_schema(self):
+        """
+        get tables from schema
+        """
         
-            
-    """
-    run extraxtor
-    """
+        sql = """ select now()
+        
+        """
+        
+        self.dbi.execute(sql)
+        
+    def get_tables_from_csv(self):
+        """
+        get table list form csv
+        """
+
     def run(self):
-        
+        """
+        run extraxtor
+        """ 
         models = []
         
         table_names = ["site", "company", "area"]
         
         for table_name in table_names:
             
-            tab_dict = self.get_info(table_name)
+            tab_dict = self.get_schema(table_name)
             
             if tab_dict != None:
                 print "get table: %s" % (table_name)
@@ -90,15 +118,18 @@ class Extractor(object):
                 
         self.save(models)
     
-    def get_info(self, table_name):
+    def get_schema(self, table_name):
+        """
+        call pg function to get schema info of a table
+        """
         
         json_str = '{"catalog":"maboss", "schema":"mabotech","table_name":"%s"}' % (table_name)
         
-        sql = """ select get_schema2('%s') """ %(json_str)
+        sql = """ select get_schema2('%s') """ % (json_str)
 
-        self.db.execute(sql)
+        self.dbi.execute(sql)
         
-        data = self.db.fetchone()
+        data = self.dbi.fetchone()
         
         if "data" in data[0]:
             cols = data[0]['data']

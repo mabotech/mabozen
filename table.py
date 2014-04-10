@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
 
+"""
+DDL for Table create, drop
+
+"""
 import glob
 
 import re
@@ -6,31 +11,45 @@ import re
 
 import pg
 
+
+def get_tablename(line):
+    """
+    get table name from ddl scripts(sql)
+    """
+    
+    rawstr = r"""CREATE TABLE\s(.*)\s?"""
+
+    compile_obj = re.compile(rawstr,   re.MULTILINE)
+    
+    match_obj = compile_obj.search(line)
+    
+    return match_obj.group(1)
+
+
 class Table(object):
+    """
+    DDL execution for table
+    """
     
     def __init__(self):
+        """
+        init pg db
+        """
+        conn_string = "port=6432 dbname=maboss user=mabotech password=mabouser"
+        self.dbi = pg.Pg(conn_string)
         
-        connString = "port=6432 dbname=maboss user=mabotech password=mabouser"
-        self.db = pg.Pg(connString)
-        pass
-        
-    def get_tablename(self, line):
-        
-        rawstr = r"""CREATE TABLE\s(.*)\s?"""
 
-        compile_obj = re.compile(rawstr,   re.MULTILINE)
-        
-        match_obj = compile_obj.search(line)
-        
-        return match_obj.group(1)
 
     def exists(self, tablename):
+        """
+        check table exists or not
+        """
+        sql = """select count(1) from information_schema.tables 
+                where table_name = '%s' """ % (tablename)
         
-        sql = "select count(1) from information_schema.tables where table_name = '%s'" %(tablename)
+        self.dbi.execute(sql)
         
-        self.db.execute(sql)
-        
-        rtn = self.db.fetchone()
+        rtn = self.dbi.fetchone()
 
         if rtn[0] == 1:        
             print("%s exists" %(tablename))
@@ -41,51 +60,61 @@ class Table(object):
         #return True
 
     def drop(self, tablename):
+        """
+        drop table
+        """
         
-        sql = "drop table %s cascade" %(tablename)
+        sql = "drop table %s cascade" % (tablename)
         
-        self.db.execute(sql)
-        self.db.commit()
+        self.dbi.execute(sql)
+        self.dbi.commit()
         
-        print("drop")
-        pass
+        print(sql)
         
     def rename(self, tablename):
+        """
+        rename table
+        """
         
-        sql = """ ALTER TABLE %s RENAME TO %s_1""" %(tablename, tablename)
-        self.db.execute(sql)
-        self.db.commit()
-        print("rename")
-        pass
+        sql = """ ALTER TABLE %s RENAME TO %s_1""" % (tablename, tablename)
+        self.dbi.execute(sql)
+        self.dbi.commit()
+        print(sql)
         
     def create(self, tablename, ddl):
-        
-        print("create table %s" %(tablename))
-        self.db.execute(ddl)
-        self.db.commit()
+        """
+        create table
+        """
+        print("create table %s" % (tablename))
+        self.dbi.execute(ddl)
+        self.dbi.commit()
 
-    def run(self):
+    def run(self):        
+        """
+        execute ddl sql
+        """
         
         ddl = glob.glob("output/*.sql")
 
         filename =  ddl[0]
 
-        fh = open(filename, 'r')
+        with open(filename, 'r') as fileh:
 
-        s = fh.read()
+            scripts = fileh.read()
 
-        ps  = s.split(';')
+            script_array  = scripts.split(';')
 
-        for line in ps:
-            
-            if len(line) > 10:
-                tablename = self.get_tablename(line)
+            for line in script_array:
                 
-                if self.exists(tablename):
-                        
+                if len(line) > 10:
+                    
+                    tablename = get_tablename(line)
+                    
+                    if self.exists(tablename):
+                            
                         #self.rename(tablename)                        
                         self.drop(tablename) 
-                        
-                self.create(tablename, line)
+                            
+                    self.create(tablename, line)
         
-        fh.close()
+        #fh.close()
