@@ -9,7 +9,6 @@ id serial Not NULL,
 {{ col_def }},
 {% endfor  %}
 -- common columns:
-referenceid integer,
 active smallint NOT NULL DEFAULT 1,
 modifiedby character varying(40),
 modifiedon timestamp without time zone,

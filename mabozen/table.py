@@ -9,7 +9,7 @@ import glob
 import re
 
 
-import pg
+import lib.pg
 
 
 def get_tablename(line):
@@ -17,7 +17,7 @@ def get_tablename(line):
     get table name from ddl scripts(sql)
     """
     
-    rawstr = r"""CREATE TABLE\s(.*)\s?"""
+    rawstr = r"""CREATE TABLE\s(\w+)\s?"""
 
     compile_obj = re.compile(rawstr,   re.MULTILINE)
     
@@ -45,7 +45,9 @@ class Table(object):
         check table exists or not
         """
         sql = """select count(1) from information_schema.tables 
-                where table_name = '%s' """ % (tablename)
+                where table_name = '%s' and table_schema = 'mabotech' """ % ( tablename.lower() )
+        
+        print(sql)
         
         self.dbi.execute(sql)
         
@@ -62,14 +64,24 @@ class Table(object):
     def drop(self, tablename):
         """
         drop table
-        """
+        """  
         
-        sql = "drop table %s cascade" % (tablename)
+        try:
         
-        self.dbi.execute(sql)
-        self.dbi.commit()
+            sql = """drop table %s cascade""" % (tablename)
+            
+            self.dbi.execute(sql)
+            self.dbi.commit()
+
+            sql = """drop table "%s" cascade""" % (tablename)
+            
+            self.dbi.execute(sql)
+            self.dbi.commit()    
+        except Exception, ex:
+            self.dbi.rollback()    
+            print (ex.message)
         
-        print(sql)
+        #print(sql)
         
     def rename(self, tablename):
         """
@@ -96,11 +108,16 @@ class Table(object):
         
         ddl = glob.glob("output/*.sql")
 
-        filename =  ddl[0]
+        #filename =  ddl[0]
+        
+        filename = "../templates/pg_new.sql"
+        filename = "../output/pg_ddl_c49eca796ca91ad8d69a965f44141958.sql"
 
         with open(filename, 'r') as fileh:
 
             scripts = fileh.read()
+            
+            scripts = scripts.replace('"', '')
 
             script_array  = scripts.split(';')
 
@@ -118,3 +135,11 @@ class Table(object):
                     self.create(tablename, line)
         
         #fh.close()
+        
+if __name__ == "__main__":
+    
+    tab = Table()
+    
+    tab.run()
+    
+    

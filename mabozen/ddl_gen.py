@@ -8,7 +8,7 @@ import glob
 
 import re
 
-import pg
+import lib.pg
 
 class DDL(object):
     

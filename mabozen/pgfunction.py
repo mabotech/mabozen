@@ -3,7 +3,7 @@ import os
 import re
 import md5
 
-import pg
+import lib.pg
 
 class PgFunction(object):
     

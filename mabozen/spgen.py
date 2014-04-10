@@ -3,7 +3,7 @@ import glob
 import re
 import md5
 
-import pg
+import lib.pg
 
 class SpGen(object):
     
