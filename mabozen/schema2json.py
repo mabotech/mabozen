@@ -33,7 +33,7 @@ class Extractor(object):
         conn_string = "port=6432 dbname=maboss user=mabotech password=mabouser"
         self.dbi = Pg(conn_string)
         
-        loader  = FileSystemLoader("../templates")
+        loader  = FileSystemLoader("templates")
 
         self.env = Environment(loader=loader, trim_blocks=True, lstrip_blocks = True)
 
