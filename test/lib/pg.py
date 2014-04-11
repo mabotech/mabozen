@@ -25,17 +25,17 @@ class Pg(object):
         self.conn.rollback()
     
     def fetchone(self):
-
         return self.cur.fetchone()
 
     def fetchall(self):
-
         return self.cur.fetchall()
 
-    def __del___(self):
-        
+    def close(self):        
         self.cur.close()
-
+        self.conn.close()
+        
+    def __del___(self):
+        self.cur.close()
         self.conn.close()
         
         

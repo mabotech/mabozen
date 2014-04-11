@@ -3,6 +3,8 @@
 import unittest
 
 import json
+import string
+
 from lib.pg import Pg
 
 from faker import Factory
@@ -16,40 +18,55 @@ class Test{{class_name}}(unittest.TestCase):
         self.dbi = Pg(conn_string)
         
         self.fake = Factory.create()
+       
+    def tearDown(self):
+        self.dbi.close()
         
     def get_word(self, maxlen=100):
         
         word = self.fake.word()
         
         if len(word)>maxlen:
-            return (word[:maxlen], word)
+            return word[:maxlen]
         else:
-            return (word, word)
+            return word
 
+    def get_bpchar(self, maxlen):
+        
+        word = self.fake.word()
+        
+        if len(word)>maxlen:
+            return word[:maxlen]
+        else:
+            s = string.ljust(word,maxlen)
+            print s
+            return s
+        
     def test_create_{{table}}(self):
         
-        name = self.get_word(4)
-        params= {"table":"company", 
-            "kv" : { "id":"", "company": name[0], 
-            "texths":name[1], "createdon":"20140408T010203.456::timestamp"}, 
+        params= {"table":"{{table}}", 
+            "kv":{
+                {{attrs}}            
+            },
             "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
         
-        sql = "select mtp_upsert_cf2 as result from mtp_upsert_cf2('%s')" %(json.dumps(params) )
+        sql = "select mtp_upsert_cf3 as result from mtp_upsert_cf3('%s')" %(json.dumps(params) )
         
         #print(  sql )
         
-        self.dbi.execute(sql)
-        rtn = self.dbi.fetchone()
-        if 'error' in rtn[0]:
-            self.dbi.rollback()
-        else:
-            self.dbi.commit()
+        try:
+            self.dbi.execute(sql)
+            rtn = self.dbi.fetchone()
+            print(rtn)
+            self.dbi.commit()    
+        except Exception, ex:
         
-        print(rtn)
-
+            self.dbi.rollback()            
+            print(ex.message)                  
+    {#
     def test_update_{{table}}(self):
 
-        params= {  "table": "company",
+        params= {  "table": "{{table}}",
                         "filter": "active = 1",
                         "cols": ["id", "seq", "createdby"],
                         "orderby": "2",
@@ -68,7 +85,7 @@ class Test{{class_name}}(unittest.TestCase):
 
     def test_get_{{table}}(self):
         
-        params= {  "table": "company",
+        params= {  "table": "{{table}}",
                         "filter": "active = 1",
                         "cols": ["id", "seq", "createdby"],
                         "orderby": "2",
@@ -86,7 +103,7 @@ class Test{{class_name}}(unittest.TestCase):
         print(rtn)
     
     def test_search_{{table}}(self):        
-        params= {  "table": "company",
+        params= {  "table": "{{table}}",
                         "filter": "active = 1",
                         "cols": ["id", "seq", "createdby"],
                         "orderby": "2",
@@ -104,7 +121,7 @@ class Test{{class_name}}(unittest.TestCase):
         print(rtn)
 
     def test_delete_{{table}}(self):        
-        params= {  "table": "company",
+        params= {  "table": "{{table}}",
                         "filter": "active = 1",
                         "cols": ["id", "seq", "createdby"],
                         "orderby": "2",
@@ -120,6 +137,7 @@ class Test{{class_name}}(unittest.TestCase):
         rtn = self.dbi.fetchone()
 
         print(rtn)
+    #}
 
 
 if __name__ == "__main__":

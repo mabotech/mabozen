@@ -136,9 +136,9 @@ class Extractor(object):
         """ 
         models = []
         
-        table_names = ["company", "company_address"]
+        #table_names = ["deploys"]
         
-        #table_names = self.get_tables_from_schema()
+        table_names = self.get_tables_from_schema()
         
         for tabname in table_names:
             
@@ -183,17 +183,75 @@ class Extractor(object):
         class_name = "".join(xs)
         
         table = {}
+        
+        attrs = []
+        for property in obj["properties"]:
+            #print (property)
+            #print (property["name"]),
+            #print (property["type"])
+            if property["type"] in ["varchar", "bpchar"]:
+                if "maximum_length" in property:
+                    mlen = property["maximum_length"]
+                else:
+                    mlen = ""
+                v = "self.get_word(%s)" % (mlen)
+                attr = '"%s":%s' %(property["name"], v)          
+                """
+                elif property["type"] in ["bpchar"]:
+                    mlen = property["maximum_length"]
+                    v = "self.get_bpchar(%s)" % (mlen)
+                    attr = '"%s":%s' %(property["name"], v)                
+            """
+            elif property["type"] in ['hstore']:
+                attr = '"%s":"hstore(\'1033\',%s)"' %(property["name"], "self.get_word()")  
+                
+            #elif property["type"] in ['json']:
+            #    attr = '"%s":"{}"' %(property["name"])                  
+            
+            elif property["type"] == 'date':
+                attr = '"%s":%s' %(property["name"], "self.fake.date()")  
+            
+            elif property["type"] in ['datetime']:
+                attr = '"%s":%s' %(property["name"], "self.fake.date_time()")  
+            elif property["type"] in ['timestamptz']:
+                attr = '"%s":"now()"' %(property["name"])                 
+            elif property["type"]  in ['int4','numeric']:
+                attr = '"%s":%s' %(property["name"], "self.fake.random_int()")           
+            elif property["type"]  in ['int2']:
+                attr = '"%s":1' %(property["name"])                   
+            else:
+                v = "self.fake.%s()" % (property["type"] )
+                attr = '"%s":%s' %(property["name"], v)  
+            
+            attrs.append( attr )
+        
+        attrs1 = """#abc
+        #def
+    #ijk
+        """
+        
+        #x = attrs.split("\n")
+        z = []
+        i = 0
+        for y in attrs:
+            i = i + 1
+            if i >1:
+                j = 16
+            else:
+                j = 0
+                
+            z.append(" "* j+y.lstrip())
+            
+        attrs = ",\n".join(z)
 
-        v = template.render(class_name=class_name, table = table_name)
+        v = template.render(class_name=class_name, table = table_name, attrs = attrs)
         
         #print(v)
         
         with open("../test/test_%s.py" % (table_name), 'w') as fileh:
             fileh.write(v)
         
-        for property in obj["properties"]:
-            print (property["name"])
-        pass
+
         
     def gen_html(self, obj):
         
