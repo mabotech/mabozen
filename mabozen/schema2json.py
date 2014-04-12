@@ -26,7 +26,8 @@ from mabozen.lib.build_models import build
 #
 class JsonModels(object):
     """
-    pg schema extractor
+    schema extractor
+    add ora schema to json?
     """
    
     def __init__(self):
@@ -41,7 +42,7 @@ class JsonModels(object):
 
         #self.env = Environment(loader=loader, trim_blocks=True, lstrip_blocks = True)           
     
-    def _get_tables_from_schema(self):
+    def _get_tables_pg(self):
         """
         get tables from schema
         """
@@ -76,9 +77,7 @@ class JsonModels(object):
         data = self.dbi.fetchone()
         
         if "data" in data[0]:
-            cols = data[0]['data']
-        
-        
+            cols = data[0]['data']     
         
             return build(table_name, cols)
         
@@ -88,7 +87,14 @@ class JsonModels(object):
             
         #for col in cols:
         #    pprint( col )#['column_name']
-
+        
+    def _save_json(self, models):
+        """
+        save models in json file
+        """
+        filename = "../models/models_%s.json" % (strftime("%Y%m%d%H%M%S", localtime()))
+        save_models(filename, models)       
+        
     def get_json(self):
         """
         run extraxtor
@@ -97,7 +103,7 @@ class JsonModels(object):
         
         table_names = ["address","company", "deploys"]
         
-        #table_names = self._get_tables_from_schema()
+        #table_names = self._get_tables_pg()
         
         for tabname in table_names:
             
@@ -105,36 +111,22 @@ class JsonModels(object):
                 
                 table_name = tabname
                 
-            else:
-            
+            else:            
                 table_name = tabname[0]
             
             tab_dict = self._get_schema(table_name)
             
             if tab_dict != None:
-                #print "get table: %s" % (table_name)
-                
-                #print (tab_dict)
-                
-                #self.gen_test_case(tab_dict)
-                #self.gen_html_form(tab_dict)
-                
                 models.append(tab_dict)
             else:
-                print "not table: [%s]" % (table_name)
+                msg = "not table: [%s]" % (table_name)
+                raise Exception(msg)
         
         return models
-        #save models
-    
+        
     def run(self):
         models = self.get_json()
-        self._save_json(models)
-        
-    def _save_json(self, models):
-        filename = "../models/models_%s.json" % (strftime("%Y%m%d%H%M%S", localtime()))
-        save_models(filename, models)        
-        
-        #self.gen_code(models)       
+        self._save_json(models)     
 
             
 if __name__ == "__main__":
