@@ -28,11 +28,7 @@ class TestDeploys(unittest.TestCase):
         
         params= {"table":"deploys", 
             "kv":{
-                "deployid":self.fake.random_int(),
-                "sql":self.fake.text(),
-                "md5":get_word(32),
-                "diff":self.fake.text(),
-                "datestamp":"now()"            
+                "deployid":self.fake.random_int()            
             },
             "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
         
@@ -48,7 +44,34 @@ class TestDeploys(unittest.TestCase):
         except Exception, ex:
         
             self.dbi.rollback()            
-            print(ex.message)                  
+            print(ex.message) 
+
+
+    def test_find(self):
+        """
+        [test_find] test function calling
+        """
+        
+        params= {  "table": "deploys",
+                        "filter": "active = 1",
+                        "cols": ["id", "seq", "createdby"],
+                        "orderby": "2",
+                        "offset": "0",
+                        "limit": "3" }
+        
+        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
+        
+        #print(  sql )
+        
+        self.dbi.execute(sql)
+        
+        rtn = self.dbi.fetchone()
+        
+        assert "count" in rtn[0]
+        
+        assert 'id' in rtn[0]['result'][0]
+
+        
     
 
 

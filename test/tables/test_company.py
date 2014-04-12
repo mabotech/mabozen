@@ -11,7 +11,7 @@ from mabozen.lib.testutils import get_word, get_bpchar
 
 from faker import Factory
 
-class TestAddress(unittest.TestCase):
+class TestCompany(unittest.TestCase):
 
     def setUp(self):
         
@@ -24,28 +24,11 @@ class TestAddress(unittest.TestCase):
     def tearDown(self):
         self.dbi.close()
         
-    def test_create_address(self):
+    def test_create_company(self):
         
-        params= {"table":"address", 
+        params= {"table":"company", 
             "kv":{
-                "addresstypecode":get_word(60),
-                "agency":get_word(80),
-                "geographiclocationid":self.fake.random_int(),
-                "externaladdressid":get_word(50),
-                "pobox":get_word(16),
-                "housenumber":get_word(8),
-                "floor":get_word(8),
-                "roomnumber":get_word(8),
-                "inhousemail":get_word(8),
-                "postalcode":get_word(20),
-                "regioncode":get_word(10),
-                "countrycode":get_word(3),
-                "timezoneid":self.fake.random_int(),
-                "calendarsystemtypeid":self.fake.random_int(),
-                "codesystemtype":get_word(10),
-                "formattype":get_word(10),
-                "domainmanagerid":self.fake.random_int(),
-                "objectclass":get_word(40)            
+                "company":get_word(4)            
             },
             "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
         
@@ -61,7 +44,34 @@ class TestAddress(unittest.TestCase):
         except Exception, ex:
         
             self.dbi.rollback()            
-            print(ex.message)                  
+            print(ex.message) 
+
+
+    def test_find(self):
+        """
+        [test_find] test function calling
+        """
+        
+        params= {  "table": "company",
+                        "filter": "active = 1",
+                        "cols": ["id", "seq", "createdby"],
+                        "orderby": "2",
+                        "offset": "0",
+                        "limit": "3" }
+        
+        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
+        
+        #print(  sql )
+        
+        self.dbi.execute(sql)
+        
+        rtn = self.dbi.fetchone()
+        
+        assert "count" in rtn[0]
+        
+        assert 'id' in rtn[0]['result'][0]
+
+        
     
 
 

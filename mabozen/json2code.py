@@ -6,10 +6,13 @@ json to code [unittest, html]
 
 import os
 
+import traceback
+
 from mabozen.schema2json import JsonModels
 
 from mabozen.addon.gen_pytest import gen_unittest 
-from mabozen.addon.gen_html import gen_form
+
+from mabozen.addon.gen_html import gen_html
 
 #########################################
 #
@@ -30,14 +33,22 @@ class CodeGen(object):
         self.conf["addons"] = ["web", "pytest"]
         
         #template root path
+        
+        self.conf["app_root"] = os.getcwd()
+        
         self.conf["tpl_root"] = os.sep.join([os.getcwd(), "templates"])
+        
+        self.conf["out_root"] = os.sep.join([ os.path.dirname(os.getcwd()), "output"])
+        
+        self.conf["test_root"] = os.sep.join([ os.path.dirname(os.getcwd()), "test"])
         
         self.conf["pytest"] = ""
 
         #template file for web form
         self.conf["form"] = "form_mako.html"
  
-        self.tpl_form = os.sep.join([os.getcwd(), "templates", "web", self.conf["form"] ])
+        
+        self.tpl_web = os.sep.join([os.getcwd(), "templates", "web"]) #, self.conf["form"] ])
  
         self._print_info()
     
@@ -66,16 +77,19 @@ class CodeGen(object):
                 if "web" in self.conf["addons"]:
                     #generate html file [form]
                     print("- gen web")
-                    gen_form(self.tpl_form, table_name, attrs)
+                    gen_html(self.conf, table_name, attrs)
                 
                 if "pytest" in self.conf["addons"]:
                     
                     #generate unit test py file
                     print("- gen pytest")
-                    gen_unittest(table_name, attrs)
+                    gen_unittest(self.conf, table_name, attrs)
                 
             except Exception as ex:
+                
                 print (ex.message)
+                
+                traceback.print_exc()
             
 if __name__ == "__main__":
     

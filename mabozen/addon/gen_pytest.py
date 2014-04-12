@@ -4,18 +4,17 @@
 json to code [unittest]
 """
 
+import os
+
 from mako.template import Template
 from mako import exceptions
 
 from mabozen.lib.utils import get_class_name
 from mabozen.lib.utils import save_file
 
-def gen_unittest(table_name, model):
-    """
-    change to mako template?
-    """
 
-    class_name = get_class_name(table_name)    
+def make_attrs(table_name, model):
+       
    
     attrs = []
     
@@ -51,15 +50,18 @@ def gen_unittest(table_name, model):
             fake_func = "self.fake.%s()" % (column["type"] )
             attr = '"%s":%s' % (column["name"], fake_func)  
         
-        attrs.append( attr )        
+        attrs.append( attr )    
         
-        save(class_name, table_name, attrs)
+        return attrs
         
-def save(class_name, table_name, attrs):
+def gen_unittest(conf, table_name, model):
+    """
+    change to mako template?
+    """
     
-    """
-    save unittest py file
-    """
+    class_name = get_class_name(table_name) 
+    
+    attrs = make_attrs(table_name, model)
     
     just_line = []
     i = 0
@@ -76,7 +78,7 @@ def save(class_name, table_name, attrs):
     
     try:
         
-        template_file = "templates/test/test_single_table_mako.py"
+        template_file = os.sep.join([conf["tpl_root"], "test", "test_single_table_mako.py"])
         
         template = Template(filename=template_file,   \
                                         disable_unicode=True, input_encoding='utf-8')
@@ -90,6 +92,6 @@ def save(class_name, table_name, attrs):
         
         raise Exception("render error")
     
-    filename = "../test/test_%s.py" % (table_name)
+    filename = os.sep.join( [ conf["test_root"], "tables","test_%s.py" % (table_name) ] )
     
     save_file(filename, content)   

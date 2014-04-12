@@ -44,7 +44,34 @@ class Test${class_name}(unittest.TestCase):
         except Exception, ex:
         
             self.dbi.rollback()            
-            print(ex.message)                  
+            print(ex.message) 
+
+
+    def test_find(self):
+        """
+        [test_find] test function calling
+        """
+        
+        params= {  "table": "${table}",
+                        "filter": "active = 1",
+                        "cols": ["id", "seq", "createdby"],
+                        "orderby": "2",
+                        "offset": "0",
+                        "limit": "3" }
+        
+        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
+        
+        #print(  sql )
+        
+        self.dbi.execute(sql)
+        
+        rtn = self.dbi.fetchone()
+        
+        assert "count" in rtn[0]
+        
+        assert 'id' in rtn[0]['result'][0]
+
+        
     <%doc>
     def test_update_{{table}}(self):
 

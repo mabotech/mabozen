@@ -11,7 +11,7 @@ from mabozen.lib.testutils import get_word, get_bpchar
 
 from faker import Factory
 
-class TestCompany(unittest.TestCase):
+class TestAddress(unittest.TestCase):
 
     def setUp(self):
         
@@ -24,17 +24,11 @@ class TestCompany(unittest.TestCase):
     def tearDown(self):
         self.dbi.close()
         
-    def test_create_company(self):
+    def test_create_address(self):
         
-        params= {"table":"company", 
+        params= {"table":"address", 
             "kv":{
-                "company":get_word(4),
-                "texths":"hstore('1033',get_word())",
-                "currencycode":get_word(3),
-                "codesystemtype":get_word(10),
-                "formattype":get_word(10),
-                "domainmanagerid":self.fake.random_int(),
-                "objectclass":get_word(40)            
+                "addresstypecode":get_word(60)            
             },
             "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
         
@@ -50,7 +44,34 @@ class TestCompany(unittest.TestCase):
         except Exception, ex:
         
             self.dbi.rollback()            
-            print(ex.message)                  
+            print(ex.message) 
+
+
+    def test_find(self):
+        """
+        [test_find] test function calling
+        """
+        
+        params= {  "table": "address",
+                        "filter": "active = 1",
+                        "cols": ["id", "seq", "createdby"],
+                        "orderby": "2",
+                        "offset": "0",
+                        "limit": "3" }
+        
+        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
+        
+        #print(  sql )
+        
+        self.dbi.execute(sql)
+        
+        rtn = self.dbi.fetchone()
+        
+        assert "count" in rtn[0]
+        
+        assert 'id' in rtn[0]['result'][0]
+
+        
     
 
 
