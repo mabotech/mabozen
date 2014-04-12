@@ -1,0 +1,23 @@
+<!-- {{table}} -->
+New - Edit - Delete - Config<br/>
+Filter<br/>
+<form class="form-horizontal" role="form">
+{% for field in attrs %}
+{% if field.type == 'varchar' %}
+  <label class="control-label" for="id_{{field.name}}">{{field.name.capitalize()}} [{{field.type}}]:</label>
+    <div class="col-sm-10">
+       <input type="text"  class="form-control" id="id_{{field.name}}" ng-model="{{field.name}}"/>
+    </div>
+  </div>
+{% else %}
+  <label class="control-label" for="id_{{field.name}}">{{field.name.capitalize()}} [{{field.type}}]:</label>
+    <div class="col-sm-10">
+       <select class="form-control" id="id_{{field.name}}" ng-model="{{field.name}}"/>
+    </div>
+  </div>
+{% endif %}
+{% endfor %}
+  <div class="col-sm-10">
+    <button ng-click="post()">Post</button>
+  </div>
+</form>

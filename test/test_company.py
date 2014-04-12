@@ -11,7 +11,7 @@ from mabozen.lib.testutils import get_word, get_bpchar
 
 from faker import Factory
 
-class TestDeploys(unittest.TestCase):
+class TestCompany(unittest.TestCase):
 
     def setUp(self):
         
@@ -24,15 +24,17 @@ class TestDeploys(unittest.TestCase):
     def tearDown(self):
         self.dbi.close()
         
-    def test_create_deploys(self):
+    def test_create_company(self):
         
-        params= {"table":"deploys", 
+        params= {"table":"company", 
             "kv":{
-                "deployid":self.fake.random_int(),
-                "sql":self.fake.text(),
-                "md5":get_word(32),
-                "diff":self.fake.text(),
-                "datestamp":"now()"            
+                "company":get_word(4),
+                "texths":"hstore('1033',get_word())",
+                "currencycode":get_word(3),
+                "codesystemtype":get_word(10),
+                "formattype":get_word(10),
+                "domainmanagerid":self.fake.random_int(),
+                "objectclass":get_word(40)            
             },
             "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
         

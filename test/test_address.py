@@ -11,7 +11,7 @@ from mabozen.lib.testutils import get_word, get_bpchar
 
 from faker import Factory
 
-class TestDeploys(unittest.TestCase):
+class TestAddress(unittest.TestCase):
 
     def setUp(self):
         
@@ -24,15 +24,28 @@ class TestDeploys(unittest.TestCase):
     def tearDown(self):
         self.dbi.close()
         
-    def test_create_deploys(self):
+    def test_create_address(self):
         
-        params= {"table":"deploys", 
+        params= {"table":"address", 
             "kv":{
-                "deployid":self.fake.random_int(),
-                "sql":self.fake.text(),
-                "md5":get_word(32),
-                "diff":self.fake.text(),
-                "datestamp":"now()"            
+                "addresstypecode":get_word(60),
+                "agency":get_word(80),
+                "geographiclocationid":self.fake.random_int(),
+                "externaladdressid":get_word(50),
+                "pobox":get_word(16),
+                "housenumber":get_word(8),
+                "floor":get_word(8),
+                "roomnumber":get_word(8),
+                "inhousemail":get_word(8),
+                "postalcode":get_word(20),
+                "regioncode":get_word(10),
+                "countrycode":get_word(3),
+                "timezoneid":self.fake.random_int(),
+                "calendarsystemtypeid":self.fake.random_int(),
+                "codesystemtype":get_word(10),
+                "formattype":get_word(10),
+                "domainmanagerid":self.fake.random_int(),
+                "objectclass":get_word(40)            
             },
             "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
         
