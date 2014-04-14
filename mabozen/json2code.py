@@ -12,7 +12,9 @@ from mabozen.schema2json import JsonModels
 
 from mabozen.addon.gen_pytest import gen_unittest 
 
-from mabozen.addon.gen_html import gen_html
+from mabozen.addon.gen_web import gen_web
+
+from mabozen.addon.gen_menu import gen_menu
 
 #########################################
 #
@@ -30,11 +32,11 @@ class CodeGen(object):
         self.conf = {}
         
         #configurating addons
-        self.conf["addons"] = ["web", "pytest"]
+        self.conf["addons"] = ["pytest"]# ["menu","web", "pytest"]
         
         #template root path
         
-        self.conf["app_root"] = os.getcwd()
+        #self.conf["app_root"] = os.getcwd()
         
         self.conf["tpl_root"] = os.sep.join([os.getcwd(), "templates"])
         
@@ -42,11 +44,10 @@ class CodeGen(object):
         
         self.conf["test_root"] = os.sep.join([ os.path.dirname(os.getcwd()), "test"])
         
-        self.conf["pytest"] = ""
+        #self.conf["pytest"] = ""
 
         #template file for web form
-        self.conf["form"] = "form_mako.html"
- 
+        #self.conf["form"] = "form_mako.html" 
         
         self.tpl_web = os.sep.join([os.getcwd(), "templates", "web"]) #, self.conf["form"] ])
  
@@ -64,20 +65,27 @@ class CodeGen(object):
         
         models = self.jsonm.get_json()
         
+        tables = []
         
         for model in models:
             
             table_name = model["_table"]
+            
+            tables.append(table_name)
+            
             print (">>:%s" % (table_name) )
             
             attrs = model["properties"]
             
             try:
-            
+                
+                    
+                    
+                    
                 if "web" in self.conf["addons"]:
                     #generate html file [form]
                     print("- gen web")
-                    gen_html(self.conf, table_name, attrs)
+                    gen_web(self.conf, table_name, attrs)
                 
                 if "pytest" in self.conf["addons"]:
                     
@@ -90,7 +98,14 @@ class CodeGen(object):
                 print (ex.message)
                 
                 traceback.print_exc()
+        
+        if "menu" in self.conf["addons"]:
             
+            self.conf["template_type"]  = "menu"
+            self.conf["file_type"]  = "html"
+            
+            gen_menu(self.conf, tables)
+        
 if __name__ == "__main__":
     
     cgen = CodeGen()

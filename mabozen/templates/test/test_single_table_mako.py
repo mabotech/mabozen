@@ -20,6 +20,21 @@ class Test${class_name}(unittest.TestCase):
         self.dbi = Pg(conn_string)
         
         self.fake = Factory.create()
+
+        sql = "select id, rowversion from ${table} where active = 1 order by seq  offset 0 limit 2"
+
+        self.dbi.execute(sql)
+
+        rtn = self.dbi.fetchall()
+        
+        if len(rtn)<1:
+            self.${table}_id = None
+            self.rowversion = 1
+            #raise Exception("no enough data")
+        else:
+            self.${table}_id = rtn[0][0]
+            #self.${table}_id2 = rtn[1][0]
+            self.rowversion = rtn[0][1]
        
     def tearDown(self):
         self.dbi.close()
@@ -27,32 +42,47 @@ class Test${class_name}(unittest.TestCase):
     def test_create_${table}(self):
         
         params= {"table":"${table}", 
-            "kv":{
+            "columns":{
                 ${attrs}            
             },
             "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
         
-        sql = "select mtp_upsert_cf3 as result from mtp_upsert_cf3('%s')" %(json.dumps(params) )
+        sql = "select mtp_upsert_cf4 as result from mtp_upsert_cf4('%s')" %(json.dumps(params) )
         
         #print(  sql )
         
-        try:
-            self.dbi.execute(sql)
-            rtn = self.dbi.fetchone()
-            print(rtn)
-            self.dbi.commit()    
-        except Exception, ex:
         
-            self.dbi.rollback()            
-            print(ex.message) 
+        self.dbi.execute(sql)
+        rtn = self.dbi.fetchone()
 
+        assert 'id' in rtn[0]['result'][0]
+    
+    def test_create_${table}2(self):
+        
+        params= {"table":"${table}", 
+            "columns":{
+                ${attrs}            
+            },
+            "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
+        
+        sql = "select mtp_upsert_cf4 as result from mtp_upsert_cf4('%s')" %(json.dumps(params) )
+        
+        #print(  sql )
+        
+        self.dbi.execute(sql)
+        rtn = self.dbi.fetchone()
+        #print(rtn)
+        self.dbi.commit()    
 
+        assert 'id' in rtn[0]['result'][0]
+ 
     def test_find(self):
         """
         [test_find] test function calling
         """
         
         params= {  "table": "${table}",
+                        "languageid":"1033",
                         "filter": "active = 1",
                         "cols": ["id", "seq", "createdby"],
                         "orderby": "2",
@@ -71,84 +101,83 @@ class Test${class_name}(unittest.TestCase):
         
         assert 'id' in rtn[0]['result'][0]
 
+    #mtp_find_active_cf1
         
-    <%doc>
-    def test_update_{{table}}(self):
-
-        params= {  "table": "{{table}}",
+    def test_find_active(self):
+        """
+        [test_find] test function calling
+        """
+        
+        params= {  "table": "${table}",
+                       "languageid":"1033",
                         "filter": "active = 1",
                         "cols": ["id", "seq", "createdby"],
                         "orderby": "2",
                         "offset": "0",
                         "limit": "3" }
         
-        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
+        sql = "select mtp_find_active_cf1 as result from mtp_find_active_cf1('%s')" %(json.dumps(params) )
         
         #print(  sql )
         
         self.dbi.execute(sql)
         
         rtn = self.dbi.fetchone()
-
-        print(rtn)
-
-    def test_get_{{table}}(self):
         
-        params= {  "table": "{{table}}",
-                        "filter": "active = 1",
-                        "cols": ["id", "seq", "createdby"],
-                        "orderby": "2",
-                        "offset": "0",
-                        "limit": "3" }
+        assert "count" in rtn[0]
         
-        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" % (json.dumps(params) )
+        assert 'id' in rtn[0]['result'][0]
+
+    def test_get(self):
+        """
+        [test_find] test function calling
+        """
+        params= {  "table": "${table}",
+                        "id": self.${table}_id,
+                        "languageid": "1033"
+                }
+        
+        sql = "select mtp_get_cf1 as result from mtp_get_cf1('%s')" %(json.dumps(params) )
         
         #print(  sql )
         
         self.dbi.execute(sql)
         
         rtn = self.dbi.fetchone()
+        
+        #print(rtn)
+        assert "id" in rtn[0]["result"][0]
+        assert  self.${table}_id ==rtn[0]["result"][0]["id"]
+        #assert 'id' in rtn[0]['result'][0]
 
-        print(rtn)
-    
-    def test_search_{{table}}(self):        
-        params= {  "table": "{{table}}",
-                        "filter": "active = 1",
-                        "cols": ["id", "seq", "createdby"],
-                        "orderby": "2",
-                        "offset": "0",
-                        "limit": "3" }
-        
-        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
-        
-        #print(  sql )
-        
-        self.dbi.execute(sql)
-        
-        rtn = self.dbi.fetchone()
 
-        print(rtn)
+    def test_update_${table}(self):
+            
+            if self.${table}_id == None:
+                raise(Exception("no data"))
 
-    def test_delete_{{table}}(self):        
-        params= {  "table": "{{table}}",
-                        "filter": "active = 1",
-                        "cols": ["id", "seq", "createdby"],
-                        "orderby": "2",
-                        "offset": "0",
-                        "limit": "3" }
-        
-        sql = "select mtp_find_cf1 as result from mtp_find_cf1('%s')" %(json.dumps(params) )
-        
-        #print(  sql )
-        
-        self.dbi.execute(sql)
-        
-        rtn = self.dbi.fetchone()
+            params= {"table":"${table}", 
+                "columns":{
+                    ${attrs},
+                    "id":self.${table}_id,
+                    "rowversion":self.rowversion
 
-        print(rtn)
-    </%doc>
+                },
+                "context":{"user":self.fake.first_name(), "languageid":"1033", "sessionid":"123" } }
+            
+            json_str = json.dumps(params).replace("'","''")
+            sql = "select mtp_upsert_cf4 as result from mtp_upsert_cf4('%s')" %(json_str)
+            
+            #print(  sql )
+            
+            self.dbi.execute(sql)
+            rtn = self.dbi.fetchone()
+            
+            #print(rtn)
+            self.dbi.commit()    
 
+            assert rtn[0]["result"][0]["id"] == self.${table}_id
 
 if __name__ == "__main__":
     
-    unittest.main()
+    unittest.main(verbosity=3)

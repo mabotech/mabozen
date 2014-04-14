@@ -11,6 +11,9 @@ backup/
 #output
 output/
 
+#test
+test/
+
 #models
 models/
 

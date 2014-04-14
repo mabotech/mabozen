@@ -30,7 +30,8 @@ def make_attrs(table_name, model):
             attr = '"%s":%s' % (column["name"], fake_func)          
 
         elif column["type"] in ['hstore']:
-            attr = '"%s":"hstore(\'1033\',%s)"'  % (column["name"], "get_word()")  
+            #attr = '"%s":"hstore(\'1033\',%s)"'  % (column["name"], "get_word()")  
+            attr = '"%s":get_word()' % (column["name"])
             
         #elif column["type"] in ['json']:
         #    attr = '"%s":"{}"' %(column["name"])                  
@@ -52,9 +53,16 @@ def make_attrs(table_name, model):
         
         attrs.append( attr )    
         
-        return attrs
+    return attrs
         
 def gen_unittest(conf, table_name, model):
+    
+    
+    for tpl in [[ "test_single_table_mako.py", "cru"] ]: #  ,  ["test_item_delete_mako.py", "d"]]:
+        
+        gen_one_unittest(conf, table_name, model, tpl)
+        
+def gen_one_unittest(conf, table_name, model, tpl):
     """
     change to mako template?
     """
@@ -78,7 +86,7 @@ def gen_unittest(conf, table_name, model):
     
     try:
         
-        template_file = os.sep.join([conf["tpl_root"], "test", "test_single_table_mako.py"])
+        template_file = os.sep.join([conf["tpl_root"], "test", tpl[0]])
         
         template = Template(filename=template_file,   \
                                         disable_unicode=True, input_encoding='utf-8')
@@ -92,6 +100,6 @@ def gen_unittest(conf, table_name, model):
         
         raise Exception("render error")
     
-    filename = os.sep.join( [ conf["test_root"], "tables","test_%s.py" % (table_name) ] )
+    filename = os.sep.join( [ conf["test_root"], "tables","test_%s_%s.py" % (table_name, tpl[1]) ] )
     
     save_file(filename, content)   
