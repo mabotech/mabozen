@@ -14,6 +14,8 @@ class PgFunction(object):
         connString = "port=6432 dbname=maboss user=mabotech password=mabouser"
         self.dbi = Pg(connString)
         
+        self.function_root = r"E:\mabodev\maboss\database\functions"
+        
     def get(self, name):
         pass
     
@@ -44,7 +46,9 @@ $BODY$%(body)s$BODY$
         
     def save(self, name,  result_dtype,  args_dtype, language, body):
         
-        fn = "../output/plcoffee/%s.sql" %(name)
+        filename = "%s.sql" %(name)
+        
+        fn = os.sep.join([self.function_root, filename])
         
         if os.path.exists(fn):
             
@@ -54,7 +58,8 @@ $BODY$%(body)s$BODY$
             
             if old_digest != digest:
         
-                fn = "../output/plcoffee/%s_%s.sql" %(name, digest)        
+                filename = "%s_%s.sql" %(name, digest)        
+                fn = os.sep.join([self.function_root, filename])
                 
                 #check if already backuped
                 if  os.path.exists(fn):
@@ -123,10 +128,12 @@ LEFT JOIN pg_language l ON p.prolang=l.oid
         
     def _get_functions(self):
         
-        sql = """  select p.proname from pg_proc p 
+        sql = """  select p.proname 
+from pg_proc p 
 LEFT JOIN pg_type t1 ON p.prorettype=t1.oid
 LEFT JOIN pg_authid a ON p.proowner=a.oid
-where a.rolname = 'mabotech'  and t1.typstorage='x'        
+left join pg_catalog.pg_namespace ns on  p.pronamespace = ns.oid
+where ns.nspname = 'mabotech'  and proname not like 'uuid%'
         """
         
         self.dbi.execute(sql)
