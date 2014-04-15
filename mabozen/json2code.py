@@ -44,6 +44,12 @@ class CodeGen(object):
         
         self.conf["test_root"] = os.sep.join([ os.path.dirname(os.getcwd()), "test"])
         
+        self.conf["test_tpl"] = [
+                                    ("test_single_table_mako.py", "cru", "py"),
+                                    ("test_item_delete_mako.py", "d","py"),
+                                    ("test_item_delete_mako.py", "req","js")                                    
+                                ] 
+        
         #self.conf["pytest"] = ""
 
         #template file for web form

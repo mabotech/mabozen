@@ -58,7 +58,7 @@ def make_attrs(table_name, model):
 def gen_unittest(conf, table_name, model):
     
     
-    for tpl in [[ "test_single_table_mako.py", "cru"] ]: #  ,  ["test_item_delete_mako.py", "d"]]:
+    for tpl in conf["test_tpl"]: # [[ "test_single_table_mako.py", "cru"] ]: #  ,  ["test_item_delete_mako.py", "d"]]:
         
         gen_one_unittest(conf, table_name, model, tpl)
         
@@ -100,6 +100,6 @@ def gen_one_unittest(conf, table_name, model, tpl):
         
         raise Exception("render error")
     
-    filename = os.sep.join( [ conf["test_root"], "tables","test_%s_%s.py" % (table_name, tpl[1]) ] )
+    filename = os.sep.join( [ conf["test_root"], "tables","test_%s_%s.%s" % (table_name, tpl[1], tpl[2]) ] )
     
     save_file(filename, content)   
