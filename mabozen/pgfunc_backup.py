@@ -1,22 +1,35 @@
+# -*- coding: utf-8 -*-
 
+"""
+pg function backup and load
+
+"""
 import os
 import re
 import hashlib
 
+import traceback
+
 from mabozen.lib.pg import Pg
 
 class PgFunction(object):
+    """
+    class
+    """
     
     def __init__(self):
         """
         init
         """
-        connString = "port=6432 dbname=maboss user=mabotech password=mabouser"
-        self.dbi = Pg(connString)
+        conn_string = "port=6432 dbname=maboss user=mabotech password=mabouser"
+        self.dbi = Pg(conn_string)
         
         self.function_root = r"E:\mabodev\maboss\database\functions"
         
     def get(self, name):
+        """
+        get what?
+        """
         pass
     
     def get_file_digest(self, filename):
@@ -32,46 +45,55 @@ class PgFunction(object):
         
         return self.get_digest(body)        
     
-    def _save(self, fn, name,  result_dtype,  args_dtype, language, body):
+    @classmethod
+    def _save(cls, full_filename, func_dict):
+        """
+        render and save
+        """
         
-                sql = """CREATE OR REPLACE FUNCTION %(name)s(%(args_dtype)s)
-  RETURNS %(return_type)s AS
+        sql = """CREATE OR REPLACE FUNCTION %(name)s(%(args_dtype)s)
+  RETURNS %(result_dtype)s AS
 $BODY$%(body)s$BODY$
   LANGUAGE %(language)s VOLATILE
-  """%{"name":name,"return_type": result_dtype,  "args_dtype":args_dtype, "body":body, "language":language}
+  """% func_dict
+        #{"name":name,"return_type": result_dtype,  "args_dtype":args_dtype, "body":body, "language":language}
   
-                fh = open(fn, 'w')
-                fh.write(sql)
-                fh.close()        
-        
-    def save(self, name,  result_dtype,  args_dtype, language, body):
-        
-        filename = "%s.sql" %(name)
-        
-        fn = os.sep.join([self.function_root, filename])
-        
-        if os.path.exists(fn):
+        with open(full_filename, 'w') as fileh:
             
-            old_digest = self.get_file_digest(fn)
+            fileh.write(sql)
+        
+    def save(self, func_dict):
+        """
+        save sql to file system
+        """
+        filename = "%s.sql" % (func_dict["name"])
+        
+        full_filename = os.sep.join([self.function_root, filename])
+        
+        if os.path.exists(full_filename):
             
-            digest = self.get_digest(body)
+            old_digest = self.get_file_digest(full_filename)
+            
+            digest = self.get_digest(func_dict["body"])
             
             if old_digest != digest:
         
-                filename = "%s_%s.sql" %(name, digest)        
-                fn = os.sep.join([self.function_root, filename])
+                filename = "%s_%s.sql" % (func_dict["name"], digest)   
+                
+                full_filename_digest = os.sep.join([self.function_root, filename])
                 
                 #check if already backuped
-                if  os.path.exists(fn):
+                if  os.path.exists(full_filename_digest):
                     print(">.backuped")
                 else:
-                    print(fn)
-                    self._save(fn, name,  result_dtype,  args_dtype, language, body)                
+                    print(full_filename_digest)
+                    self._save(full_filename_digest, func_dict)                
             else:
-                print("same file")
+                #print("same file")
+                pass
         else:
             
-            self._save(fn, name,  result_dtype,  args_dtype, language, body)
+            self._save(full_filename, func_dict)
             
         #print sql
   
@@ -90,11 +112,12 @@ $BODY$%(body)s$BODY$
           l.lanname AS language_type,
           p.proargtypes AS argument_types_oids,
           prosrc AS body
-     FROM pg_proc p
+FROM pg_proc p
 LEFT JOIN pg_type t1 ON p.prorettype=t1.oid
 LEFT JOIN pg_authid a ON p.proowner=a.oid
 LEFT JOIN pg_language l ON p.prolang=l.oid
-    WHERE p.proname ='%s' """ %(fname)
+    WHERE p.proname ='%s' """ % (fname)
+    
         self.dbi.execute(sql)
         
         #print(sql)
@@ -110,41 +133,59 @@ LEFT JOIN pg_language l ON p.prolang=l.oid
         language = rtn[5]
         body =  rtn[7]
         
-        return (name, result_dtype,  args_dtype, language, body)
+        return {"name" : name, "result_dtype" : result_dtype,  
+                        "args_dtype" : args_dtype, "language" : language, "body" : body }
         
-    def get_digest(self, body):
+    @classmethod
+    def get_digest(cls, body):
         """
         get body digest
         """
-        m = hashlib.md5()
+        md5 = hashlib.md5()
 
-        m.update(body)
+        md5.update(body)
 
-        digest = m.hexdigest()
+        digest = md5.hexdigest()
         
         #print(digest)
             
         return digest
         
     def _get_functions(self):
+        """
+        get functions name from schema.
+        """
         
         sql = """  select p.proname 
 from pg_proc p 
 LEFT JOIN pg_type t1 ON p.prorettype=t1.oid
 LEFT JOIN pg_authid a ON p.proowner=a.oid
 left join pg_catalog.pg_namespace ns on  p.pronamespace = ns.oid
-where ns.nspname = 'mabotech'  and proname not like 'uuid%'
-        """
+where ns.nspname = '%(schema)s'  and proname not like 'uuid%%'
+        """ % {"schema":"mabotech"}
         
         self.dbi.execute(sql)
         
         rows = self.dbi.fetchall()
-        list = []
+        
+        proc_list = []
+        
         for row in rows:
-            list.append(row[0])
+            proc_list.append(row[0])
         
-        return  list #["mtp_search_cf2"]
+        return  proc_list #["mtp_search_cf2"]
         
+    def load(self):
+        """
+        glob filename, read sql and compare hash with same name function in db.
+        
+        if glob file has multi version (function_name_version_hash) then load the last created one.
+        
+        if function exists and has same hash then pass
+        if exists and different hash then backup function in db and load sql file
+        if not exists then load directly
+        """
+    
     def backup(self):
         
         """
@@ -156,19 +197,24 @@ where ns.nspname = 'mabotech'  and proname not like 'uuid%'
         for fname in functions:
             
             try:
-                (name,  result_dtype,  args_dtype,  language, body) = self.query_source(fname)
+                func_dict = self.query_source(fname)
             
-                self.save(name,  result_dtype,  args_dtype, language, body)
+                self.save(func_dict)
+                
             except Exception, ex:
                 print(ex.message)
-        pass
+                traceback.print_exc()
+                raise Exception("error")
+
         
 
 def main():
-    
+    """
+    for run and test
+    """
     pgf = PgFunction()
     pgf.backup()
-    pass
+
         
 if __name__ == "__main__":
     
