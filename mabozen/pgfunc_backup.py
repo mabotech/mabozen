@@ -61,6 +61,16 @@ $BODY$%(body)s$BODY$
         with open(full_filename, 'w') as fileh:
             
             fileh.write(sql)
+            
+    @classmethod
+    def _save_coffee(cls, full_filename, func_dict):            
+        """
+        save coffee
+        """
+        
+        with open(full_filename.replace(".sql",".coffee"), 'w') as fileh:
+            
+            fileh.write(func_dict["body"])
         
     def save(self, func_dict):
         """
@@ -70,6 +80,8 @@ $BODY$%(body)s$BODY$
         
         full_filename = os.sep.join([self.function_root, filename])
         
+        self._save_coffee(full_filename, func_dict)
+        
         if os.path.exists(full_filename):
             
             old_digest = self.get_file_digest(full_filename)
@@ -78,7 +90,7 @@ $BODY$%(body)s$BODY$
             
             if old_digest != digest:
         
-                filename = "%s_%s.sql" % (func_dict["name"], digest)   
+                filename = "%s@%s.sql" % (func_dict["name"], digest)   
                 
                 full_filename_digest = os.sep.join([self.function_root, filename])
                 
