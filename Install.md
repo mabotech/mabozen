@@ -1,5 +1,13 @@
 
 
+##Configuration
+
+create configuration file by copy mabozen_sample.ini
+
+conf/mabozen.ini
+conf/mabozen.json
+
+
 
 ##PostgreSQL
 

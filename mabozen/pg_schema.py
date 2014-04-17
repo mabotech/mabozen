@@ -5,16 +5,22 @@
 PostgreSQL Schema infomation
 """
 
+import logging
+
 import json
 
 from mabozen.lib.pg import Pg
 
+logger = logging.getLogger()
+
 
 class PgSchema(object):
-    """ class """
+    """ class postgresql schema"""
     
     def __init__(self, port, dbname, username, password):
         """  init db connection """
+        
+        logger.debug("init PgSchema")
         
         #catalog == dbname
         #schema == username
@@ -56,16 +62,19 @@ where ns.nspname = '%(schema)s'  and proname not like 'uuid%%'
         
         sql = """select count(1) from pg_proc p
 LEFT JOIN pg_authid a ON p.proowner=a.oid
-where proname = '%s' and a.rolname = '%s' """ % (function_name, self.schema)
+where proname = '%s' """ % (function_name)
+        # and a.rolname = '%s', self.schema)
+
         self.dbi.execute(sql)
+
+        #logger.debug(sql)
         
         row = self.dbi.fetchone()
       
         if row[0] == 1: #exists
             return True
         else:  #not exists
-            return False
-    
+            return False    
         
     def function_info(self, function_name):
         """ get function information: args, return datatype, body, language """
@@ -149,6 +158,15 @@ LEFT JOIN pg_language l ON p.prolang=l.oid
         
         data = self.dbi.fetchone()
         
-        return data
+        return data        
+        
+    def execute_sql(self, sql):
+        """ execute sql """
+        
+        self.dbi.execute(sql)
+        self.dbi.commit()
+        
+        
+    
         
     
