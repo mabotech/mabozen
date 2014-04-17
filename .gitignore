@@ -8,6 +8,7 @@ __pycache__/
 # config
 mabozen.ini
 mabozen.json
+mabozen_config.py
 
 #backup
 backup/

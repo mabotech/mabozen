@@ -11,7 +11,7 @@ import json
 
 from mabozen.lib.pg import Pg
 
-logger = logging.getLogger()
+logger = logging.getLogger("schema")
 
 
 class PgSchema(object):

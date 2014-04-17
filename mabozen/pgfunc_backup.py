@@ -10,7 +10,13 @@ import hashlib
 
 import traceback
 
-from mabozen.lib.pg import Pg
+from mabozen.config import get_db_config
+from mabozen.config import logging
+
+logger = logging("zen_backup")
+
+from mabozen.pg_schema import PgSchema
+
 
 class PgFunction(object):
     """
@@ -21,10 +27,14 @@ class PgFunction(object):
         """
         init
         """
-        conn_string = "port=6432 dbname=maboss user=mabotech password=mabouser"
-        self.dbi = Pg(conn_string)
+
+        ZEN_CFG = get_db_config()
         
-        self.function_root = r"E:\mabodev\maboss\database\functions"
+        self.pgs = PgSchema(ZEN_CFG['PORT'],ZEN_CFG['DATABASE'], ZEN_CFG['USERNAME'], ZEN_CFG['PASSWORD'])
+        
+        self.function_root = ZEN_CFG['FUNCTIONS_ROOT']
+        
+        logger.debug("init")
         
     def get(self, name):
         """
@@ -109,45 +119,6 @@ $BODY$%(body)s$BODY$
             
         #print sql
   
-    def query_source(self, fname):
-        """
-        get function from information_schema
-        """
-        #fname = 'mt_user_c_cf7'
-        
-        sql = """SELECT p.proname AS procedure_name,
-          p.pronargs AS num_args,
-          -- t1.typname AS return_type,          
-          pg_catalog.pg_get_function_result(p.oid) as result_data_type,
-          pg_catalog.pg_get_function_arguments(p.oid) as args_data_types,
-          a.rolname AS procedure_owner,
-          l.lanname AS language_type,
-          p.proargtypes AS argument_types_oids,
-          prosrc AS body
-FROM pg_proc p
-LEFT JOIN pg_type t1 ON p.prorettype=t1.oid
-LEFT JOIN pg_authid a ON p.proowner=a.oid
-LEFT JOIN pg_language l ON p.prolang=l.oid
-    WHERE p.proname ='%s' """ % (fname)
-    
-        self.dbi.execute(sql)
-        
-        #print(sql)
-        
-        rtn = self.dbi.fetchone()
-        
-        if not rtn:
-            raise Exception("no function:%s" % (fname))
-            
-        name = rtn[0]
-        result_dtype = rtn[2]
-        args_dtype = rtn[3]
-        language = rtn[5]
-        body =  rtn[7]
-        
-        return {"name" : name, "result_dtype" : result_dtype,  
-                        "args_dtype" : args_dtype, "language" : language, "body" : body }
-        
     @classmethod
     def get_digest(cls, body):
         """
@@ -163,53 +134,18 @@ LEFT JOIN pg_language l ON p.prolang=l.oid
             
         return digest
         
-    def _get_functions(self):
-        """
-        get functions name from schema.
-        """
-        
-        sql = """  select p.proname 
-from pg_proc p 
-LEFT JOIN pg_type t1 ON p.prorettype=t1.oid
-LEFT JOIN pg_authid a ON p.proowner=a.oid
-left join pg_catalog.pg_namespace ns on  p.pronamespace = ns.oid
-where ns.nspname = '%(schema)s'  and proname not like 'uuid%%'
-        """ % {"schema":"mabotech"}
-        
-        self.dbi.execute(sql)
-        
-        rows = self.dbi.fetchall()
-        
-        proc_list = []
-        
-        for row in rows:
-            proc_list.append(row[0])
-        
-        return  proc_list #["mtp_search_cf2"]
-        
-    def load(self):
-        """
-        glob filename, read sql and compare hash with same name function in db.
-        
-        if glob file has multi version (function_name_version_hash) then load the last created one.
-        
-        if function exists and has same hash then pass
-        if exists and different hash then backup function in db and load sql file
-        if not exists then load directly
-        """
-    
     def backup(self):
         
         """
         backup function from pg
         """
         
-        functions = self._get_functions()
+        functions = self.pgs.get_functions()  #self._get_functions()
         
         for fname in functions:
             
             try:
-                func_dict = self.query_source(fname)
+                func_dict = self.pgs.function_info(fname) #self.query_source(fname)
             
                 self.save(func_dict)
                 

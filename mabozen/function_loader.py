@@ -2,29 +2,28 @@
 
 """
 load function
+
+glob filename, read sql and compare hash with same name function in db.
+
+if glob file has multi version (function_name_version_hash) then load the last created one.
+
+if function exists and has same hash then pass
+if exists and different hash then backup function in db and load sql file
+if not exists then load directly
+
 """
 
 import os
-import glob
-
 import re
+import glob
+import traceback
 
-from flask.config import Config
+from mabozen.config import get_db_config
+from mabozen.config import logging
 
-from mabozen.lib.logging_factory import get_logger
+logger = logging("zen_loader")
 
 from mabozen.pg_schema import PgSchema
-
-
-APP = "mabozen"
-LOGGING_CONFIG_FILE = 'conf/logging_config.py'
-
-
-LOG_CFG = Config('')
-
-LOG_CFG.from_pyfile(LOGGING_CONFIG_FILE)
-
-logger = get_logger(APP, '..\\logs', LOG_CFG['LOGGING']) 
 
 class Loader(object):
     """ class """
@@ -32,7 +31,10 @@ class Loader(object):
     def __init__(self):
         """  init db schema """
         
-        self.pgs = PgSchema(6432, 'maboss', 'mabotech', 'mabouser')
+        ZEN_CFG = get_db_config()
+        
+        self.pgs = PgSchema(ZEN_CFG['PORT'],ZEN_CFG['DATABASE'], ZEN_CFG['USERNAME'], ZEN_CFG['PASSWORD'])
+        logger.debug("init")
         
     @classmethod
     def _get_function_name_from_sql(cls, sql):
