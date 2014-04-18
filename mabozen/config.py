@@ -1,12 +1,13 @@
 
-
-
+import os
 
 from flask.config import Config
 
 from mabozen.lib.logging_factory import get_logger
 
 from mabozen.lib.singleton import Singleton
+
+MOD_ROOT = os.path.dirname(os.path.abspath(__file__) )
 
 class ZenConfig(object):
     
@@ -16,7 +17,8 @@ class ZenConfig(object):
         pass
         
 def get_db_config():
-    MABOZEN_CONFIG_FILE = 'conf/mabozen_config.py'
+    
+    MABOZEN_CONFIG_FILE = os.sep.join([MOD_ROOT, 'conf','mabozen_config.py'])
 
     ZEN_CFG = Config('')
 
@@ -28,7 +30,7 @@ def get_db_config():
 def logging(APP):
     #APP = "mabozen"
 
-    LOGGING_CONFIG_FILE = 'conf/logging_config.py'
+    LOGGING_CONFIG_FILE = os.sep.join([MOD_ROOT, 'conf','logging_config.py'])
 
     LOG_CFG = Config('')
 
@@ -47,3 +49,6 @@ if __name__ == '__main__':
     print a['PASSWORD']
     print a['DATABASE']
     print a['USERNAME']
+    
+    import os
+    print 
