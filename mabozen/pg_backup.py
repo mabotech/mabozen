@@ -18,7 +18,7 @@ logger = logging("zen_backup")
 from mabozen.pg_schema import PgSchema
 
 
-class PgFunction(object):
+class PgBackup(object):
     """
     class
     """
@@ -134,7 +134,7 @@ $BODY$%(body)s$BODY$
             
         return digest
         
-    def backup(self):
+    def func_backup(self):
         
         """
         backup function from pg
@@ -160,8 +160,8 @@ def main():
     """
     for run and test
     """
-    pgf = PgFunction()
-    pgf.backup()
+    backup = PgBackup()
+    backup.func_backup()
 
         
 if __name__ == "__main__":

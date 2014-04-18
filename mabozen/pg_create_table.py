@@ -12,7 +12,7 @@ import re
 import lib.pg
 
 
-def get_tablename(line):
+def get_table_name(line):
     """
     get table name from ddl scripts(sql)
     """
@@ -26,7 +26,7 @@ def get_tablename(line):
     return match_obj.group(1)
 
 
-class Table(object):
+class PgDDLGen(object):
     """
     DDL execution for table
     """
@@ -61,7 +61,7 @@ class Table(object):
             return False
         #return True
 
-    def drop(self, tablename):
+    def drop_table(self, tablename):
         """
         drop table
         """  
@@ -83,7 +83,7 @@ class Table(object):
         
         #print(sql)
         
-    def rename(self, tablename):
+    def rename_table(self, tablename):
         """
         rename table
         """
@@ -93,7 +93,7 @@ class Table(object):
         self.dbi.commit()
         print(sql)
         
-    def create(self, tablename, ddl):
+    def create_table(self, tablename, ddl):
         """
         create table
         """
@@ -125,20 +125,20 @@ class Table(object):
                 
                 if len(line) > 10:
                     
-                    tablename = get_tablename(line)
+                    tablename = get_table_name(line)
                     
                     if self.exists(tablename):
                             
-                        #self.rename(tablename)                        
-                        self.drop(tablename) 
+                        #self.rename_table(tablename)                        
+                        self.drop_table(tablename) 
                             
-                    self.create(tablename, line)
+                    self.create_table(tablename, line)
         
         #fh.close()
         
 if __name__ == "__main__":
     
-    tab = Table()
+    tab = PgDDLGen()
     
     tab.run()
     

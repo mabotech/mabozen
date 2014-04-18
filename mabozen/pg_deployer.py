@@ -25,7 +25,7 @@ logger = logging("zen_loader")
 
 from mabozen.pg_schema import PgSchema
 
-class Loader(object):
+class PgDeployer(object):
     """ class """
     
     def __init__(self):
@@ -69,7 +69,7 @@ class Loader(object):
                 #logger.info("%s exists " % (function_name))
                 pass
                 
-    def run(self):
+    def func_deploy(self):
         """run load"""
         
         funcs_dict = {}
@@ -106,8 +106,8 @@ class Loader(object):
            
 def main():
     """ main """
-    loader = Loader()
-    loader.run()
+    deployer = PgDeployer()
+    deployer.func_deploy()
     
     
 if __name__ == "__main__":

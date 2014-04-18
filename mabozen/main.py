@@ -17,8 +17,8 @@ parser.add_argument('-j', '--tojson', dest='tojson', action='store_true',
 parser.add_argument('-b', '--backup', dest='backup', action='store_true',
                    help='backup function from db', default=False)
 
-parser.add_argument('-l', '--load', dest='load', action='store_true',
-                   help='load function to db', default=False)
+parser.add_argument('-d', '--deploy', dest='load', action='store_true',
+                   help='deploy function to db', default=False)
                    
 parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.1')                   
                    
@@ -28,29 +28,29 @@ NOARG = True
 
 if args.tojson:
     NOARG = False
-    from mabozen.schema2json import JsonModels
+    from mabozen.pg_json_model import PgJsonModel
     
     print("to json")
-    jsonm = JsonModels()
+    jsonm = PgJsonModel()
     jsonm.run()
 
 if args.backup:
     NOARG = False    
-    from mabozen.pgfunc_backup import PgFunction
+    from mabozen.pg_backup import PgBackup
     
     print("backup")
-    func = PgFunction()
-    func.backup()
+    backup = PgBackup()
+    backup.func_backup()
     
 if args.load:
     
     NOARG = False
     
-    from mabozen.function_loader import Loader
+    from mabozen.pg_deployer import PgDeployer
     
     print("load")
-    loader = Loader()
-    loader.run()
+    deployer = PgDeployer()
+    deployer.func_deploy()
     
 if NOARG:
     parser.print_help()

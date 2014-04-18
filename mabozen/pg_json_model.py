@@ -30,7 +30,7 @@ from mabozen.lib.build_models import build
 
 #########################################
 #
-class JsonModels(object):
+class PgJsonModel(object):
     """
     schema extractor
     add ora schema to json?
@@ -102,6 +102,6 @@ class JsonModels(object):
             
 if __name__ == "__main__":
     
-    jsonm = JsonModels()
+    json_m = PgJsonModel()
     
-    jsonm.run()
+    json_m.run()

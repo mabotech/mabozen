@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 
 """
-json to code [unittest, html]
+json to code:
+
+- testcase
+- html
+- js
+
 """
 
 import os
 
 import traceback
 
-from mabozen.schema2json import JsonModels
+from mabozen.pg_json_model import PgJsonModel
 
 from mabozen.addon.gen_pytest import gen_unittest 
 
@@ -27,7 +32,7 @@ class CodeGen(object):
         """init
         """        
 
-        self.jsonm = JsonModels()  
+        self.jsonm = PgJsonModel()  
         
         self.conf = {}
         
@@ -48,8 +53,7 @@ class CodeGen(object):
                                     ("test_single_table_mako.py", "cru", "py"),
                                     ("test_item_delete_mako.py", "d","py"),
                                     ("test_item_delete_mako.py", "req","js")                                    
-                                ] 
-        
+                                ]         
         #self.conf["pytest"] = ""
 
         #template file for web form
@@ -114,6 +118,6 @@ class CodeGen(object):
         
 if __name__ == "__main__":
     
-    cgen = CodeGen()
+    gen = CodeGen()
     
-    cgen.run()
+    gen.run()
