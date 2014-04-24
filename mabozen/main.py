@@ -12,13 +12,19 @@ import argparse
 parser = argparse.ArgumentParser(prog='mabozen.py', description='mabozen command line.')
 
 parser.add_argument('-j', '--tojson', dest='tojson', action='store_true',
-                   help='from pg db schema to json', default=False)
+                   help='from PostgreSQL db schema to json', default=False)
 
 parser.add_argument('-b', '--backup', dest='backup', action='store_true',
-                   help='backup function from db', default=False)
+                   help='backup function from PostgreSQL', default=False)
 
 parser.add_argument('-d', '--deploy', dest='load', action='store_true',
-                   help='deploy function to db', default=False)
+                   help='deploy function to PostgreSQL', default=False)
+
+parser.add_argument('-w', '--web', dest='web', action='store_true',
+                   help='generate web pages(HTML, Javascript, CSS)', default=False)
+                   
+parser.add_argument('-t', '--test', dest='test', action='store_true',
+                   help='generate unit test scripts(Python, Javascript)', default=False)
                    
 parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.1')                   
                    
@@ -51,6 +57,20 @@ if args.load:
     print("load")
     deployer = PgDeployer()
     deployer.func_deploy()
+    
+if args.web:
+    NOARG = False
+    
+    from mabozen.code_gen import CodeGen
+    
+    gen = CodeGen()
+    gen.run()
+    
+    print("gen web")
+
+if args.test:
+    NOARG = False
+    print("gen test scripts")
     
 if NOARG:
     parser.print_help()

@@ -13,13 +13,12 @@ from mabozen.lib.pg import Pg
 
 logger = logging.getLogger("schema")
 
-
 class PgSchema(object):
     """ class postgresql schema"""
-    
+
     def __init__(self, port, dbname, username, password):
         """  init db connection """
-        
+                
         logger.debug("init PgSchema")
         
         #catalog == dbname
@@ -152,8 +151,8 @@ LEFT JOIN pg_language l ON p.prolang=l.oid
         
         json_str = json.dumps(params)
         
-        sql = """ select get_schema2('%s') """ % (json_str)
-
+        sql = """ select mtp_get_schema('%s') """ % (json_str)
+        logger.debug(sql)
         self.dbi.execute(sql)
         
         data = self.dbi.fetchone()

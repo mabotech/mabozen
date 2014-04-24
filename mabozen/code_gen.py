@@ -10,7 +10,7 @@ json to code:
 """
 
 import os
-
+import logging
 import traceback
 
 from mabozen.pg_json_model import PgJsonModel
@@ -21,6 +21,7 @@ from mabozen.addon.gen_web import gen_web
 
 from mabozen.addon.gen_menu import gen_menu
 
+logger = logging.getLogger("code")
 #########################################
 #
 class CodeGen(object):
@@ -73,19 +74,20 @@ class CodeGen(object):
         run code generator
         """
         
-        models = self.jsonm.get_json()
+        models = self.jsonm.get_json() 
+        
         
         tables = []
         
         for model in models:
-            
+            logger.debug(model)
             table_name = model["_table"]
             
             tables.append(table_name)
             
             print (">>:%s" % (table_name) )
             
-            attrs = model["properties"]
+            attrs = model["data"]
             
             try:
                 

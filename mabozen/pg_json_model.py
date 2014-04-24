@@ -88,7 +88,7 @@ class PgJsonModel(object):
             tab_dict = self.pgs.query_table_schema(table_name)   #self._get_schema(table_name)
             
             if tab_dict != None:
-                models.append(tab_dict)
+                models.append(tab_dict[0])
             else:
                 msg = "not table: [%s]" % (table_name)
                 raise Exception(msg)

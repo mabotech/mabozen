@@ -33,7 +33,7 @@ class PgDeployer(object):
         
         ZEN_CFG = get_db_config()
         
-        self.pgs = PgSchema(ZEN_CFG['PORT'],ZEN_CFG['DATABASE'], ZEN_CFG['USERNAME'], ZEN_CFG['PASSWORD'])
+        self.pgs = PgSchema(ZEN_CFG["PORT"],ZEN_CFG["DATABASE"], ZEN_CFG["USERNAME"], ZEN_CFG["PASSWORD"])
         logger.debug("init")
         
     @classmethod
