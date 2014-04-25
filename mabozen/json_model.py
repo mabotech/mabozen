@@ -12,13 +12,13 @@ from mabozen.config import logging
 
 logger = logging("zen_db2json")
 
-from mabozen.pg_schema import PgSchema
+from mabozen.schema_factory import SchemaFactory
 
-from mabozen.lib.model_helpers import build_model
+#from mabozen.lib.model_helpers import build_model
 
 #########################################
 #
-class PgJsonModel(object):
+class JsonModel(object):
     """
     schema extractor
     add ora schema to json?
@@ -26,27 +26,28 @@ class PgJsonModel(object):
    
     def __init__(self):
         """init schema instance"""
+        logger.debug("init")
         
         ZEN_CFG = get_db_config()
         
-        self.schema = PgSchema(ZEN_CFG['PORT'],ZEN_CFG['DATABASE'], ZEN_CFG['USERNAME'], ZEN_CFG['PASSWORD'])
+        schemafactoy = SchemaFactory(ZEN_CFG['PORT'],ZEN_CFG['DATABASE'], ZEN_CFG['USERNAME'], ZEN_CFG['PASSWORD'])
         
-        logger.debug("init")
+        self.schema = schemafactoy.get_schema(ZEN_CFG['DBTYPE'])
        
     def _get_tables_from_csv(self):
         """
         get table list form csv
         """
         
-    def _save_json(self, models):
+    def _save_json(self, table_names, models):
         """
         save models in json file
         """
         
         #save_models(filename, models)       
         
-        info = {"version":"0.2", "by":"mabozen"}    
-        models_def = {"info":info, "models":models}
+        info = {"_version":"0.2", "by":"mabozen","tables":table_names}    
+        models_def = {"info":info,"models":models}
         
         filename = "../models/models_%s.json" % (strftime("%Y%m%d%H%M%S", localtime()))
         logger.debug(filename)
@@ -71,10 +72,10 @@ class PgJsonModel(object):
                 table_name = tabname[0]
                 
             tab_dict = self.schema.query_table_schema(table_name)   #self._get_schema(table_name)
-            print(tab_dict)
+
             if tab_dict != None:
                 #build model as json.
-                model = build_model(table_name, tab_dict)
+                model = self.schema.build_model(table_name, tab_dict)
                 models.append(model)
             else:
                 msg = "not table: [%s]" % (table_name)
@@ -89,11 +90,11 @@ class PgJsonModel(object):
             table_names =self.schema.get_tables()
             
         models = self.get_json(table_names)
-        self._save_json(models)     
+        self._save_json(table_names, models)     
 
             
 if __name__ == "__main__":
     
-    json_m = PgJsonModel()
+    json_m = JsonModel()
     table_names = ["address","company"]
     json_m.run(table_names)
