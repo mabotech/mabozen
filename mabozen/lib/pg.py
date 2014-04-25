@@ -7,14 +7,16 @@ import psycopg2
 class Pg(object):
     """ PostgreSQL proxy """
     def __init__(self, components):
-        """initialize"""
-        #conn_string format: 
-        
-        database = components["database"]
-        username = components["username"]
-        password = components["password"]
+        """
+        initialize
+        libpg: http://www.postgresql.org/docs/current/static/libpq-connect.html
+        """
         host = components["host"]
         port = components["port"]
+        database = components["database"]
+
+        username = components["username"]
+        password = components["password"]
         
         self.conn = psycopg2.connect(database=database, user = username, \
             password = password, host = host, port = port)
@@ -46,13 +48,14 @@ class Pg(object):
         """fetchall"""
         return self.cur.fetchall()
 
-    def close(self):        
+    def close(self):  
+        """ close connection manually """
         self.cur.close()
         self.conn.close()
         self.closed = True
         
     def __del___(self):
-        
+        """ close connection when   obj destoried """
         if not self.closed:
             
             self.cur.close()

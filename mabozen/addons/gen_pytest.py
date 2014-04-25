@@ -102,4 +102,6 @@ def gen_one_unittest(conf, table_name, model, tpl):
     
     filename = os.sep.join( [ conf["test_root"], "tables","test_%s_%s.%s" % (table_name, tpl[1], tpl[2]) ] )
     
-    save_file(filename, content)   
+    with open(filename, 'w') as fileh:
+        content = content.replace('\r\n', '\n') #unix CRLF to windows LF
+        fileh.write(content)       

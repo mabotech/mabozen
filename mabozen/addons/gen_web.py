@@ -73,6 +73,7 @@ def gen_code(conf, template_type, table_name, attrs):
             
     
     with open(out_path, 'w') as fileh:
+        content = content.replace('\r\n', '\n') #unix CRLF to windows LF
         fileh.write( content )
     
 

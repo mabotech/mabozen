@@ -14,7 +14,7 @@ from mabozen.lib.pg import Pg
 logger = logging.getLogger("schema")
 
 class PgSchema(object):
-    """ class postgresql schema"""
+    """ class for query PostgreSQL schema information"""
 
     def __init__(self, components):
         """  init db connection """

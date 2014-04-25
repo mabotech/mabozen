@@ -13,13 +13,13 @@ import os
 import logging
 import traceback
 
-from mabozen.pg_json_model import PgJsonModel
+from mabozen.json_model import JsonModel
 
-from mabozen.addon.gen_pytest import gen_unittest 
+from mabozen.addons.gen_pytest import gen_unittest 
 
-from mabozen.addon.gen_web import gen_web
+from mabozen.addons.gen_web import gen_web
 
-from mabozen.addon.gen_menu import gen_menu
+from mabozen.addons.gen_menu import gen_menu
 
 logger = logging.getLogger("code")
 #########################################
@@ -29,16 +29,16 @@ class CodeGen(object):
     pg schema extractor
     """
    
-    def __init__(self):
+    def __init__(self, addons):
         """init
         """        
 
-        self.jsonm = PgJsonModel()  
+        self.jsonm = JsonModel()  
         
         self.conf = {}
         
         #configurating addons
-        self.conf["addons"] = ["pytest"]# ["menu","web", "pytest"]
+        self.conf["addons"] = addons
         
         #template root path
         
@@ -69,25 +69,25 @@ class CodeGen(object):
         
         print (self.conf)
 
-    def run(self):
+    def run(self, filename):
         """
         run code generator
         """
-        
-        models = self.jsonm.get_json() 
-        
-        
+               
+        models = self.jsonm.get_json(filename)         
+        #print(models)
         tables = []
         
-        for model in models:
-            logger.debug(model)
+        for model in models["models"]:
+            
+            #logger.debug(model)
             table_name = model["_table"]
             
             tables.append(table_name)
             
             print (">>:%s" % (table_name) )
             
-            attrs = model["data"]
+            attrs = model["properties"]
             
             try:
                 
@@ -120,6 +120,10 @@ class CodeGen(object):
         
 if __name__ == "__main__":
     
-    gen = CodeGen()
+    addons = ["web","pytest"]# ["menu","web", "pytest"]
     
-    gen.run()
+    gen = CodeGen(addons)
+    
+    filename = "../models/models_20140425114210.json"
+    
+    gen.run(filename)

@@ -60,7 +60,7 @@ class JsonModel(object):
             fileh.write(json_str) 
         
         
-    def get_json(self, table_names):
+    def query(self, table_names):
         """run extraxtor""" 
         models = []
         
@@ -83,13 +83,21 @@ class JsonModel(object):
         
         return models
         
+    def get_json(self, filename):
+        
+        with open(filename, 'r') as fileh:
+            
+            json_model = fileh.read()
+        
+        return json.loads(json_model)
+        
     def run(self, table_names):
         """run model dumps"""
         
         if len(table_names) == 0:
             table_names =self.schema.get_tables()
             
-        models = self.get_json(table_names)
+        models = self.query(table_names)
         self._save_json(table_names, models)     
 
             
