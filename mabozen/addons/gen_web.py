@@ -5,12 +5,15 @@ json to code [unittest]
 """
 import os
 import hashlib
+import logging
 
 from mako.template import Template
 from mako import exceptions
 
 from mabozen.lib.utils import get_class_name
 from mabozen.lib.utils import save_html, save_file
+
+logger = logging.getLogger("web")
 
 def gen_code(conf, template_type, table_name, attrs):
     """
@@ -67,9 +70,11 @@ def gen_code(conf, template_type, table_name, attrs):
             
     
     
-    if hexdigest != old_hexdigest:
-        old_file = ".".join([out_path.replace("."+file_type, ""), old_hexdigest, file_type])
-        os.rename(out_path, old_file)
+        if hexdigest != old_hexdigest:
+            old_file = ".".join([out_path.replace("."+file_type, ""), old_hexdigest, file_type])
+            print(old_file)
+            print(out_path)
+            os.rename(out_path, old_file)
             
     
     with open(out_path, 'w') as fileh:
