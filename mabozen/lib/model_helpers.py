@@ -6,7 +6,28 @@ construct json module
 
 """
 
-def build(table_name, cols):
+import json
+
+def make_class_name(table_name):
+    """
+    construct class name from table name with underscore(_) inside
+    """
+    
+    wordlist = table_name.split("_")
+    
+    parts = []
+    
+    for word in wordlist:
+        
+        cap_word = word.capitalize()
+        
+        parts.append(cap_word)
+    
+    class_name = "".join(parts)
+    
+    return class_name
+    
+def build_model(table_name, cols):
     """
     build dict
     """

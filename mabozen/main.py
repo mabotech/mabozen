@@ -38,7 +38,9 @@ if args.tojson:
     
     print("to json")
     jsonm = PgJsonModel()
-    jsonm.run()
+    
+    table_names = ["address","company", "deploys"]
+    jsonm.run(table_names)
 
 if args.backup:
     NOARG = False    

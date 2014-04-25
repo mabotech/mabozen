@@ -153,11 +153,12 @@ LEFT JOIN pg_language l ON p.prolang=l.oid
         
         sql = """ select mtp_get_schema('%s') """ % (json_str)
         logger.debug(sql)
+        
         self.dbi.execute(sql)
         
         data = self.dbi.fetchone()
         
-        return data        
+        return data[0]["data"]
         
     def execute_sql(self, sql):
         """ execute sql """

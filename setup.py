@@ -8,9 +8,9 @@ README = open(os.path.join(here, 'README.md')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.md')).read()
 
 requires = [
-    'flask',  
-    'mako',
-    'simplejson'
+    #'flask',  
+    #'mako',
+    #'simplejson'
     ]
 
 setup(name='mabozen',
