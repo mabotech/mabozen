@@ -1,16 +1,28 @@
 # -*- coding: utf-8 -*-
 
+""" PostgreSQL proxy class """
+
 import psycopg2
 
 class Pg(object):
-    
-    def __init__(self, connString):
-
-        self.conn = psycopg2.connect(connString)
+    """ PostgreSQL proxy """
+    def __init__(self, components):
+        """initialize"""
+        #conn_string format: 
+        
+        database = components["database"]
+        username = components["username"]
+        password = components["password"]
+        host = components["host"]
+        port = components["port"]
+        
+        self.conn = psycopg2.connect(database=database, user = username, \
+            password = password, host = host, port = port)
 
         self.cur = self.conn.cursor()
        
     def execute(self, sql):
+        """ execute with exception handling """
         try:
             #sql = sql.decode("utf-8", "ignore")
             self.cur.execute(sql)
@@ -19,24 +31,33 @@ class Pg(object):
             raise Exception(e.message)
 
     def commit(self):
+        """commit"""
         self.conn.commit()
 
     def rollback(self):
+        """rollback"""
         self.conn.rollback()
     
     def fetchone(self):
+        """fetchone"""
         return self.cur.fetchone()
 
     def fetchall(self):
+        """fetchall"""
         return self.cur.fetchall()
 
     def close(self):        
         self.cur.close()
         self.conn.close()
+        self.closed = True
         
     def __del___(self):
-        self.cur.close()
-        self.conn.close()
+        
+        if not self.closed:
+            
+            self.cur.close()
+            
+            self.conn.close()
         
         
 if __name__ == '__main__':

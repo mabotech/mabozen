@@ -16,7 +16,7 @@ logger = logging.getLogger("schema")
 class PgSchema(object):
     """ class postgresql schema"""
 
-    def __init__(self, port, dbname, username, password):
+    def __init__(self, components):
         """  init db connection """
                 
         logger.debug("init PgSchema")
@@ -24,13 +24,13 @@ class PgSchema(object):
         #catalog == dbname
         #schema == username
         
-        self.catalog = dbname # "maboss"
+        self.catalog = components["database"]
         
-        self.schema = username #"mabotech"
+        self.schema = components["username"]
         
-        conn_string = "port=%s dbname=%s user=%s password=%s" % (port, dbname, username, password)
+        #conn_string = "port=%s dbname=%s user=%s password=%s" % (port, dbname, username, password)
         
-        self.dbi = Pg(conn_string)
+        self.dbi = Pg(components)
 
     def get_functions(self):
         """

@@ -12,7 +12,7 @@ from mabozen.config import logging
 
 logger = logging("zen_db2json")
 
-from mabozen.schema_factory import SchemaFactory
+from mabozen.zen_factory import ZenFactory
 
 #from mabozen.lib.model_helpers import build_model
 
@@ -30,9 +30,9 @@ class JsonModel(object):
         
         ZEN_CFG = get_db_config()
         
-        schemafactoy = SchemaFactory(ZEN_CFG['PORT'],ZEN_CFG['DATABASE'], ZEN_CFG['USERNAME'], ZEN_CFG['PASSWORD'])
+        zenfactoy = ZenFactory(ZEN_CFG['DB_URL'])
         
-        self.schema = schemafactoy.get_schema(ZEN_CFG['DBTYPE'])
+        self.schema = zenfactoy.get_schema()
        
     def _get_tables_from_csv(self):
         """
