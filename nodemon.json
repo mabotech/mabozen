@@ -1,0 +1,4 @@
+{
+  "verbose": true,
+  "ignore": ["*.egg-info/","build/", "*.html","*.js", "test/*", ".git/*", "*.log"]
+}
