@@ -20,13 +20,13 @@ def gen_code(conf, template_type, table_name, attrs):
     as a function ?
     from json to form? now from schema dict to form.
     """
-    file_type = conf["file_type"] 
+    file_type = conf["FILE_TYPE"] 
     
     class_name = get_class_name(table_name) 
     
-    tpl_path = os.sep.join([conf["tpl_root"], "web", "%s_mako.%s" % (template_type, file_type) ])
+    tpl_path = os.sep.join([conf["TPL_ROOT"], "web", "%s_mako.%s" % (template_type, file_type) ])
     
-    out_path = os.sep.join([conf["out_root"], "web", table_name,  "%s.%s" % (template_type, file_type) ])
+    out_path = os.sep.join([conf["OUT_ROOT"], "web", table_name,  "%s.%s" % (template_type, file_type) ])
 
     print(tpl_path)
     print(out_path)
@@ -91,31 +91,31 @@ def gen_web(conf, table_name, attrs):
     
     
     template_type = "form" 
-    conf["file_type"] = "html"
+    conf["FILE_TYPE"] = "html"
     
     gen_code(conf, template_type, table_name, attrs)
 
     template_type = "list" 
-    conf["file_type"] = "html"
+    conf["FILE_TYPE"] = "html"
     
     gen_code(conf, template_type, table_name, attrs)
 
     #gen index
     template_type = "index"
-    conf["file_type"]  = "html"
+    conf["FILE_TYPE"]  = "html"
     gen_code(conf, template_type, table_name, attrs)
     
     #gen app
     template_type = "form_ctrl"
-    conf["file_type"]  = "js"
+    conf["FILE_TYPE"]  = "js"
     gen_code(conf, template_type, table_name, attrs)
 
     template_type = "list_ctrl"
-    conf["file_type"]  = "js"
+    conf["FILE_TYPE"]  = "js"
     gen_code(conf, template_type, table_name, attrs)
     
     #gen controller
     template_type = "app"
-    conf["file_type"]  = "js"
+    conf["FILE_TYPE"]  = "js"
     gen_code(conf, template_type, table_name, attrs)
     

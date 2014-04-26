@@ -13,6 +13,8 @@ import os
 import logging
 import traceback
 
+from mabozen.config import get_app_config
+
 from mabozen.json_model import JsonModel
 
 from mabozen.addons.gen_pytest import gen_unittest 
@@ -44,13 +46,19 @@ class CodeGen(object):
         
         #self.conf["app_root"] = os.getcwd()
         
-        self.conf["tpl_root"] = os.sep.join([os.getcwd(), "templates"])
+        app_cfg = get_app_config()
         
-        self.conf["out_root"] = os.sep.join([ os.path.dirname(os.getcwd()), "output"])
+        self.conf["TPL_ROOT"] = os.sep.join([os.getcwd(), "templates"])
         
-        self.conf["test_root"] = os.sep.join([ os.path.dirname(os.getcwd()), "test"])
+        self.conf["OUTPUT_WEB"] = app_cfg["OUTPUT_WEB"]
         
-        self.conf["test_tpl"] = [
+        print(self.conf)
+        
+        self.conf["OUT_ROOT"] = os.sep.join([ os.path.dirname(os.getcwd()), "output"])
+        
+        self.conf["TEST_ROOT"] = os.sep.join([ os.path.dirname(os.getcwd()), "test"])
+        
+        self.conf["TEST_TPL"] = [
                                     ("test_single_table_mako.py", "cru", "py"),
                                     ("test_item_delete_mako.py", "d","py"),
                                     ("test_item_delete_mako.py", "req","js")                                    

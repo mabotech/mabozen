@@ -33,7 +33,19 @@ class ZenConfig(object):
     def get_template_path(self):
         """ return template base path """
         pass
-        
+
+
+def get_app_config():
+    """
+    get app config string
+    """
+    mabozen_config_file = os.sep.join([HERE, 'conf','mabozen_config.py'])
+
+    zen_cfg = Config('')
+
+    zen_cfg.from_pyfile(mabozen_config_file)
+    
+    return zen_cfg        
         
 def get_db_config():
     """
