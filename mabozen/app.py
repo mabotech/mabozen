@@ -5,6 +5,9 @@ Web UI for mabozen
 - code gen
 - model dump
 - db object backup and sync
+
+not load when add new file?
+
 ...
 """
 

@@ -8,6 +8,8 @@ import os
 
 from flask.config import Config
 
+from mabozen.table_group import TableGroup
+
 from mabozen.lib.singleton import Singleton
 from mabozen.lib.logging_factory import get_logger
 
@@ -44,6 +46,14 @@ def get_app_config():
     zen_cfg = Config('')
 
     zen_cfg.from_pyfile(mabozen_config_file)
+    
+    model_file = "../models/table_groups.json"
+    
+    tgroup = TableGroup(model_file)
+    
+    #tgroup.groups
+    #tgroup.table_groups
+    zen_cfg["TABLE_GROUP"] = tgroup
     
     return zen_cfg        
         

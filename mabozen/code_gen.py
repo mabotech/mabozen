@@ -73,7 +73,15 @@ class CodeGen(object):
         self._print_info()
     
     def _print_info(self):
-        """print app info"""
+        """print app info
+        
+        
+        :param
+        
+        .. versionadded:: 0.0.1
+        
+        
+        """
         
         print (self.conf)
 
