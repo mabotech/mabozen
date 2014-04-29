@@ -82,7 +82,11 @@ def logging(app_name):
 
     log_cfg.from_pyfile(logging_config_file)
     
-    logger = get_logger(app_name, '..\\logs', log_cfg['LOGGING']) 
+    #modified on 2014-04-29 16:18:40
+    #log_root = '..\\logs'
+    log_root = r"E:\mabodev\mabozen\logs"
+    
+    logger = get_logger(app_name, log_root, log_cfg['LOGGING']) 
     
     return logger
     

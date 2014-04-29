@@ -15,7 +15,8 @@ from mabozen.config import logging
 
 logger = logging("zen_backup")
 
-from mabozen.pg_schema import PgSchema
+from mabozen.zen_factory import ZenFactory
+#from mabozen.pg_schema import PgSchema
 
 
 class PgBackup(object):
@@ -30,7 +31,11 @@ class PgBackup(object):
 
         ZEN_CFG = get_db_config()
         
-        self.pgs = PgSchema(ZEN_CFG['PORT'],ZEN_CFG['DATABASE'], ZEN_CFG['USERNAME'], ZEN_CFG['PASSWORD'])
+        #self.pgs = PgSchema(ZEN_CFG['PORT'],ZEN_CFG['DATABASE'], ZEN_CFG['USERNAME'], ZEN_CFG['PASSWORD'])
+        
+        zenfactoy = ZenFactory(ZEN_CFG['DB_URL'])
+        
+        self.schema = zenfactoy.get_schema()        
         
         self.function_root = ZEN_CFG['FUNCTIONS_ROOT']
         
@@ -140,12 +145,12 @@ $BODY$%(body)s$BODY$
         backup function from pg
         """
         
-        functions = self.pgs.get_functions()  #self._get_functions()
+        functions = self.schema.get_functions()  #self._get_functions()
         
         for fname in functions:
             
             try:
-                func_dict = self.pgs.function_info(fname) #self.query_source(fname)
+                func_dict = self.schema.function_info(fname) #self.query_source(fname)
             
                 self.save(func_dict)
                 
