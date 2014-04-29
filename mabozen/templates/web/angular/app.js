@@ -5,7 +5,8 @@
 angular.module('myApp', [
   'ngRoute',
   'ui.bootstrap', // 'ui.select2'
-  
+  'ui.validate',
+  'ui.select2',
   'myApp.filters',
   'myApp.services',
   'myApp.directives',
@@ -13,6 +14,7 @@ angular.module('myApp', [
 ]).
 config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/company.form', {templateUrl: 'views/company/form.html', controller: 'CompanyFormCtrl'});
+  $routeProvider.when('/company.form/:id', {templateUrl: 'views/company/form.html', controller: 'CompanyFormCtrl'});
   $routeProvider.when('/company.list', {templateUrl: 'views/company/list.html', controller: 'CompanyListCtrl'});
   $routeProvider.otherwise({redirectTo: '/company.list'});
 }]);

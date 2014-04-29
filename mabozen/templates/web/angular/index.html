@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+  <meta charset="utf-8">
+  <title>maboss App</title>
+  <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.min.css">
+  <link href="/libs/fa/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/libs/select2-3.4.6/select2.css" rel="stylesheet">
+  <!-- -->
+  <link rel="stylesheet" href="css/app.css"/>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+
+ <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">MABOSS</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+         <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">生产管理 <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">产量</a></li>            
+            <li><a href="#">在制品</a></li>
+            <li><a href="#">质量</a></li>
+            <li class="divider"></li>
+            <li><a href="#">接口数据</a></li>
+            <li class="divider"></li>
+            <li><a href="#">报表设置</a></li>
+          </ul>
+        </li>
+        
+                <li class="active dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">数据维护 <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">产量</a></li>            
+            <li><a href="#">在制品</a></li>
+            <li><a href="#">质量</a></li>
+            <li class="divider"></li>
+            <li><a href="#">接口数据</a></li>
+            <li class="divider"></li>
+            <li><a href="#">报表设置</a></li>
+          </ul>
+        </li>
+        
+                <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">系统监控 <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">产量</a></li>            
+            <li><a href="#">在制品</a></li>
+            <li><a href="#">质量</a></li>
+            <li class="divider"></li>
+            <li><a href="#">接口数据</a></li>
+            <li class="divider"></li>
+            <li><a href="#">报表设置</a></li>
+          </ul>
+        </li>
+        
+        
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">报表 <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">产量</a></li>            
+            <li><a href="#">在制品</a></li>
+            <li><a href="#">质量</a></li>
+            <li class="divider"></li>
+            <li><a href="#">接口数据</a></li>
+            <li class="divider"></li>
+            <li><a href="#">报表设置</a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Administrator</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">设置 <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">语言</a></li>
+            <li><a href="#">账户</a></li>
+            <li><a href="#">门户</a></li>
+            <li class="divider"></li>
+            <li><a href="#">退出</a></li>
+          </ul>
+        </li>
+      </ul>
+      
+    <form class="navbar-form navbar-right" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="切换菜单">
+        </div>
+        <button type="submit" class="btn btn-default">Go</button>
+      </form>
+      
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+  <div class="col-lg-2">
+  
+ <br/>
+   <br/>
+  <br/>
+  <br/>
+ 
+
+
+  
+  <ul class="nav nav-pills nav-stacked">
+    <li id="ln01">
+    <span class="fa fa-group fa-2x"></span>
+    <span class="mt-menu-item">Organization</span>
+  </li>
+  <li class="active"><a href="#">Company</a></li>
+  <li><a href="#">Facility</a></li>
+  <li><a href="#">Production Line</a></li>
+   <li><a href="#">Production Zone</a></li>
+    <li><a href="#">Work Center</a></li>
+     <li><a href="#">Workstation</a></li>
+</ul>
+
+  
+  
+  </div>
+  <div class="col-lg-10">
+  
+  
+<div class="container">
+<div class="row">
+
+  <ul class="menu">
+    <li><a href="#/view1">view1</a></li>
+    <li><a href="#/view2">view2</a></li>
+  </ul>
+
+</div>
+    <div class="row">
+        <div class="col-xs-12 col-md-8">
+        
+    
+
+        
+            <div ng-view></div>
+        </div>
+    </div>
+        <div class="row">
+        <div class="col-xs-12 col-md-8">
+            <div style="float:right;">MABOSS 1.0.0, Powered by <a href="http://www.mabotech.com">MaboTech</a></div>
+        </div>
+    </div>
+</div>
+        </div>
+    </div>
+</div>
+
+<!--nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation" style="height:20px;" >
+<ul>
+<li class="active">
+2014-03-22 16:20:36 DEBUG: update company
+</li>
+</ul>
+</nav-->
+  <!-- In production use:
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+  -->
+  <script src="/libs/jquery-2.1.0.min.js"></script>
+  <script src="/libs/bootstrap/js/bootstrap.min.js"></script>  
+  <!-- angular -->
+  <script src="/libs/angular.min.js"></script>
+  <script src="/libs/ui-bootstrap-tpls-0.10.0.min.js"></script>
+  <script src="/libs/angular/angular-route.js"></script>
+  
+  <script src="/libs/select2-3.4.6/select2.min.js"></script>
+  <script src="/libs/angular-ui/select2.js"></script>
+  <script src="/libs/angular-ui/ui-utils/validate.js"></script>
+  
+  <!-- app -->
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/directives.js"></script>
+</body>
+</html>
