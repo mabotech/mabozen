@@ -3,16 +3,18 @@
 tidy -xml -i -utf8 -w 300 
 -->
 <div class="row">
-  <div class="col-md-8">
-    <h3>Company</h3>
+  <div class="col-md-6">
+    <b>Company</b>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-6">
     <a type="button" class="btn btn-default" href="#/company.form">
-    <span class="fa fa-plus"></span>New</a>
+    <span class="fa fa-plus"></span> New</a>
+    <button type="button" class="btn btn-default" ng-click="delete()">
+    <span class="fa fa-minus"></span> Delete</button>
+    <a type="button" class="btn btn-default" href="#/company.form">
+    <span class="fa fa-file-text-o"></span> Properties</a>    
     <a type="button" class="btn btn-default" href="#/company.list">
-    <span class="fa fa-list"></span>List</a>
-    <a type="button" class="btn btn-default" href="#/company.list">
-    <span class="fa fa-cog"></span>Setup</a>
+    <span class="fa fa-cog"></span> Setup</a>
   </div>
 </div>
 <br />
@@ -51,25 +53,66 @@ tidy -xml -i -utf8 -w 300
           <i style="float:right" class="fa fa-{{sort_icons[3]}}"></i>
         </th>
         <th>
-          <a href="" ng-click="sort(4)">Sequence</a>
+          <a href="" ng-click="sort(4)">Created By</a>
           <i style="float:right" class="fa fa-{{sort_icons[4]}}"></i>
         </th>
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="company in company_list">
-        <td>
-          <a href="#/company.form/{{company.id}}">{{company.seq}}</a>
+      <tr ng-repeat="company in company_list" ng-click="alert(company.id)">
+        <td> <input type="checkbox" value=" {{company.seq}}" ng-click="check(company.id)"/>
+          {{company.seq}}
         </td>
-        <td>{{company.company}}</td>
+        <td><a href="#/company.form/{{company.id}}">{{company.company}}</a></td>
         <td>{{company.texths}}</td>
         <td>{{company.createdon}}</td>
-        <td>{{company.seq}}</td>
+        <td>{{company.createdby}}</td>
       </tr>
     </tbody>
   </table>
 </div>
+<div>
 <pagination items-per-page="limit" total-items="bigTotalItems" page="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages" on-select-page="page_changed(page)" first-text="首页" previous-text="前页" next-text="后页" last-text="尾页"></pagination>
+</div>
 <!-- {{bigCurrentPage}} / {{numPages}} -->
+
+
+<button class="btn btn-default" ng-click="isCollapsed = !isCollapsed">Debug</button>
+	<hr>
+	<div collapse="isCollapsed">
+		 
+
+
+<div>
+<strong>URL: {{url}}</strong></div>
+  
+<div>
+<strong>Params:</strong></div>
+
+<pre>
+
+{{params}}
+
+</pre>
+
+<div>
+<strong>HTTP Status: {{status}}</strong>
+</div>
+ 
+<div>
+<strong>
+Response Body
+</strong>
+</div>
+
+<pre>
+{{data}}
+
+</pre>
+</div>
+
 <span>
 <i class="fa fa-tachometer fa-2x"></i>fa-tachometer</span>
+
+ 
+	</div>

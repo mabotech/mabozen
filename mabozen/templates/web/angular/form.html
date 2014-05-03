@@ -4,19 +4,26 @@ tidy -xml -i -utf8 -w 300
 -->
 <!-- navigator -->
 <div class="row">
-  <div class="col-md-9"></div>
-  <div class="col-md-3">
-    <a type="button" class="btn btn-default" href="#/company.form">
-    <span class="glyphicon glyphicon-plus"></span>New</a>
+  <div class="col-md-6">
+  <b> Company </b> <span class="fa fa-caret-right"></span> {{company.company}} 
+  </div>
+  <div class="col-md-6">
+  <div style="float:right">
+    <button class="btn btn-default" ng-click="save()" ng-disabled="form.$invalid">
+    <span class="fa fa-save"></span> Save</button>
+    
+        <button class="btn btn-default" ng-click="refresh()">
+    <span class="fa fa-refresh"></span> Refresh</button>
     <a type="button" class="btn btn-default" href="#/company.list">
-    <span class="glyphicon glyphicon-list"></span>List</a>
+    <span class="glyphicon glyphicon-list"></span> List</a>
+  </div>
   </div>
 </div>
 <br />
-<h3>Company</h3>
+
 <!-- form -->
 <form class="form-horizontal" role="form" name="form">
-  <tabset justified="true">
+  <tabset>
     <tab heading="General">
       <div class="panel panel-default">
         <div class="panel-body">
@@ -29,7 +36,7 @@ tidy -xml -i -utf8 -w 300
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label" for="id_texths">Company[Texths]:</label>
+            <label class="col-md-3 control-label" for="id_texths">Company:</label>
             <div class="col-md-9">
               <input type="text" class="form-control" name="texths" id="id_texths" ng-model="company.texths" required="" ui-validate=" '$value.length&gt;0'" />
               <span ng-show='form.texths.$error.validator'>Text required</span>
@@ -46,10 +53,10 @@ tidy -xml -i -utf8 -w 300
               <!-- [varchar] -->
             </div>
           </div>
-          <div class="form-group">
+          <!--div class="form-group">
             <label class="col-md-3 control-label" for="id_codesystemtype">Codesystemtype:</label>
             <div class="col-md-9">
-              <!--input type="text" class="form-control" id="id_codesystemtype" ng-model="company.codesystemtype" /-->
+ 
               <select style="width:200px" id="id_codesystemtype" ui-select2="select2Options" ng-model="company.codesystemtype">
                 <option value=""></option>
                 <option ng-repeat="item in currencycode" value="{{item}}">{{item}}</option>
@@ -59,13 +66,13 @@ tidy -xml -i -utf8 -w 300
           <div class="form-group">
             <label class="col-md-3 control-label" for="id_formattype">Formattype:</label>
             <div class="col-md-9">
-              <!--input type="text" class="form-control" id="id_formattype" ng-model="company.formattype" /-->
+            
               <select style="width:200px" id="id_formattype" ui-select2="select2Options" ng-model="company.formattype">
                 <option value=""></option>
                 <option ng-repeat="item in currencycode" value="{{item}}">{{item}}</option>
               </select>
             </div>
-          </div>
+          </div-->
           <!--div class="form-group">
             <label class="col-md-3 control-label" for="id_domainmanagerid">Domainmanagerid:</label>
             <div class="col-md-9">
@@ -79,16 +86,15 @@ tidy -xml -i -utf8 -w 300
               
             </div>
           </div-->
-          <div class="form-group">
-            <div class="col-md-3"></div>
-            <div class="col-md-9">
-              <button class="btn btn-default" ng-click="post()" ng-disabled="form.$invalid">Save</button>
-            </div>
-          </div>
+   
         </div>
       </div>
       <!-- -->
     </tab>
+    <!--tab heading="Tab2"></tab>
+    <tab heading="Tab3"></tab>
+    <tab heading="Tab4"></tab-->
+ 
     <tab heading="System">
       <div class="panel panel-default">
         <div class="panel-body">
@@ -138,5 +144,40 @@ tidy -xml -i -utf8 -w 300
         </div>
       </div>
     </tab>
+    
+       <tab heading="Debug">
+    
+    
+<div>
+<strong>URL: {{url}}</strong></div>
+  
+<div>
+<strong>Params:</strong></div>
+
+<pre>
+
+{{params}}
+
+</pre>
+
+<div>
+<strong>HTTP Status: {{status}}</strong>
+</div>
+ 
+<div>
+<strong>
+Response Body
+</strong>
+</div>
+
+<pre>
+{{data}}
+
+</pre>
+</div>
+
+    
+    </tab>
+    
   </tabset>
 </form>
