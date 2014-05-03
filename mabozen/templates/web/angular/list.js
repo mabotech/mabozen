@@ -1,10 +1,10 @@
 "use strict";
 
 /**
- * ${class_name}ListCtrl
+ * CompanyListCtrl
  * view of engity list
  */
-function ${class_name}ListCtrl($scope, $http) {
+function CompanyListCtrl($scope, $http) {
     // global
     var DEFAULT_SORT_ICON = "";
     var SORT_UP_ICON = "chevron-up";
@@ -55,8 +55,8 @@ function ${class_name}ListCtrl($scope, $http) {
     //$scope.bigTotalItems = 80;
     $scope.bigCurrentPage = 1;
     $scope.init = function() {
-        $scope.table = "${table_name}";
-        $scope.cols = [ "${table_name}", "texths", "createdon", "createdby", "seq",  "id" ];
+        $scope.table = "company";
+        $scope.cols = [ "company", "texths", "createdon", "createdby", "seq",  "id" ];
         $scope.sort_icons = {};
         var i;
         for (i = 1; i <= $scope.cols.length; i++) {
@@ -117,7 +117,7 @@ function ${class_name}ListCtrl($scope, $http) {
             elog(data);
             elog(status);
             // rows
-            $scope.${table_name}_list = data.result.rows;
+            $scope.company_list = data.result.rows;
             // pagination data
             $scope.bigTotalItems = data.result.total;
         }).error(function(data, status) {
@@ -163,7 +163,7 @@ function ${class_name}ListCtrl($scope, $http) {
             elog(data);
             elog(status);
             // rows
-            $scope.${table_name}_list = data.result.rows;
+            $scope.company_list = data.result.rows;
             // pagination data
             $scope.bigTotalItems = data.result.total;
         }).error(function(data, status) {
@@ -178,4 +178,4 @@ function ${class_name}ListCtrl($scope, $http) {
 }
 
 // <- End Controller
-${class_name}ListCtrl.$inject = [ "$scope", "$http" ];
+CompanyListCtrl.$inject = [ "$scope", "$http" ];
