@@ -1,16 +1,14 @@
 "use strict";
 
 /**
- * CompanyListCtrl
+ * ${class_name}ListCtrl
  * view of engity list
  */
-function CompanyListCtrl($scope, $http) {
+function ${class_name}ListCtrl($scope, $http) {
     // global
     var DEFAULT_SORT_ICON = "";
     var SORT_UP_ICON = "chevron-up";
-    var SORT_DOWN_ICON = "chevron-down";
-    
-    
+    var SORT_DOWN_ICON = "chevron-down"; 
     
     var DEFAULT_PAGE_SIZE = 15;
     $scope.limit = DEFAULT_PAGE_SIZE;
@@ -55,7 +53,7 @@ function CompanyListCtrl($scope, $http) {
     //$scope.bigTotalItems = 80;
     $scope.bigCurrentPage = 1;
     $scope.init = function() {
-        $scope.table = "company";
+        $scope.table = "${table_name}";
         $scope.cols = [ "company", "texths", "createdon", "createdby", "seq",  "id" ];
         $scope.sort_icons = {};
         var i;
@@ -178,4 +176,4 @@ function CompanyListCtrl($scope, $http) {
 }
 
 // <- End Controller
-CompanyListCtrl.$inject = [ "$scope", "$http" ];
+${class_name}ListCtrl.$inject = [ "$scope", "$http" ];

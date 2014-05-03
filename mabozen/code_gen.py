@@ -50,7 +50,7 @@ class CodeGen(object):
         
         self.conf["TPL_ROOT"] = os.sep.join([os.getcwd(), "templates"])
         
-        self.conf["OUTPUT_WEB"] = app_cfg["OUTPUT_WEB"]
+        self.conf["OUTPUT_WEB_ROOT"] = app_cfg["OUTPUT_WEB_ROOT"]
         
         print(self.conf)
         
@@ -68,7 +68,7 @@ class CodeGen(object):
         #template file for web form
         #self.conf["form"] = "form_mako.html" 
         
-        self.tpl_web = os.sep.join([os.getcwd(), "templates", "web"]) #, self.conf["form"] ])
+        self.tpl_web = os.sep.join([os.getcwd(), "templates", "web", "angular"]) #, self.conf["form"] ])
  
         self._print_info()
     
@@ -136,10 +136,11 @@ class CodeGen(object):
         
 if __name__ == "__main__":
     
-    addons = ["web","pytest"]# ["menu","web", "pytest"]
+    addons = ["web"]# ["menu","web", "pytest"]
     
     gen = CodeGen(addons)
     
-    filename = "../models/models_20140425114210.json"
+    filename = "../models/backup/models_20140425114210.json"
+    #filename = "../models/organization.json"
     
     gen.run(filename)

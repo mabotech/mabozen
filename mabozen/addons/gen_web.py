@@ -15,7 +15,7 @@ from mabozen.lib.utils import save_html, save_file
 
 logger = logging.getLogger("web")
 
-def gen_code(conf, template_type, table_name, attrs):
+def gen_code(conf,  jslib, template_type, table_name, attrs):
     """
     as a function ?
     from json to form? now from schema dict to form.
@@ -24,7 +24,7 @@ def gen_code(conf, template_type, table_name, attrs):
     
     class_name = get_class_name(table_name) 
     
-    tpl_path = os.sep.join([conf["TPL_ROOT"], "web", "%s_mako.%s" % (template_type, file_type) ])
+    tpl_path = os.sep.join([conf["TPL_ROOT"], "web",  jslib, "%s_mako.%s" % (template_type, file_type) ])
     
     out_path = os.sep.join([conf["OUT_ROOT"], "web", table_name,  "%s.%s" % (template_type, file_type) ])
 
@@ -34,7 +34,7 @@ def gen_code(conf, template_type, table_name, attrs):
     
         template = Template(filename=tpl_path,   disable_unicode=True, input_encoding='utf-8')
 
-        content = template.render(class_name=class_name, table = table_name, attrs = attrs)
+        content = template.render(class_name=class_name, table_name = table_name, attrs = attrs)
         
     except Exception as ex:
         
@@ -48,7 +48,8 @@ def gen_code(conf, template_type, table_name, attrs):
     if not os.path.exists( dirname):        
         os.makedirs(dirname)
         
-    content = content.replace("\n","")
+    #modified on 2014-05-03 17:16:18
+    #content = content.replace("\n","")
     
     md5 = hashlib.md5()
 
@@ -89,33 +90,34 @@ def gen_web(conf, table_name, attrs):
     
     #gen form
     
+    jslib = "angular"
     
     template_type = "form" 
     conf["FILE_TYPE"] = "html"
     
-    gen_code(conf, template_type, table_name, attrs)
+    gen_code(conf, jslib, template_type, table_name, attrs)
 
     template_type = "list" 
     conf["FILE_TYPE"] = "html"
     
-    gen_code(conf, template_type, table_name, attrs)
+    gen_code(conf,  jslib, template_type, table_name, attrs)
 
     #gen index
     template_type = "index"
     conf["FILE_TYPE"]  = "html"
-    gen_code(conf, template_type, table_name, attrs)
+    gen_code(conf,  jslib, template_type, table_name, attrs)
     
     #gen app
-    template_type = "form_ctrl"
+    template_type = "form"
     conf["FILE_TYPE"]  = "js"
-    gen_code(conf, template_type, table_name, attrs)
+    gen_code(conf,  jslib, template_type, table_name, attrs)
 
-    template_type = "list_ctrl"
+    template_type = "list"
     conf["FILE_TYPE"]  = "js"
-    gen_code(conf, template_type, table_name, attrs)
+    gen_code(conf,  jslib, template_type, table_name, attrs)
     
     #gen controller
     template_type = "app"
     conf["FILE_TYPE"]  = "js"
-    gen_code(conf, template_type, table_name, attrs)
+    gen_code(conf,  jslib, template_type, table_name, attrs)
     
