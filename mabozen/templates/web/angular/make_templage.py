@@ -1,12 +1,18 @@
+# -*- coding: utf-8 -*-
 
+"""
+make mako template from js file
+"""
 import os
 import hashlib
 
 from time import strftime, localtime
-from datetime import datetime
+
 
 def compare(content, file_name):
-
+    """
+    compare content
+    """
     md5 = hashlib.md5()
 
     md5.update(content)
@@ -26,13 +32,17 @@ def compare(content, file_name):
         return False
         
 def save(content, filename):
-    
+    """
+    save
+    """
     with open(filename, "w") as fileh:
         fileh.write(content)   
     
     
 def make_template():
-    
+    """
+    replace string
+    """
     src_file = "list.js"
     
     with open(src_file, "r") as src:
@@ -58,10 +68,10 @@ def make_template():
             #backup and create new file
             statinfo = os.stat(dst_file)
             
-            #rename will keep the old st_ctime on winfows
-            dt = strftime("%Y%m%d_%H%M%S", localtime(statinfo.st_atime))
+            #rename and create new file on Windows keep the old file st_ctime?
+            time_str = strftime("%Y%m%d_%H%M%S", localtime(statinfo.st_atime))
             
-            new_name = "list_mako_%s.js" % (dt)
+            new_name = "list_mako_%s.js" % (time_str)
             
             #print dst_file
             #print new_name
