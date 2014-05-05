@@ -9,7 +9,7 @@ import os
 import json
 import md5
 
-#from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader
 from mako.template import Template
 from mako import exceptions
 
@@ -21,11 +21,12 @@ class Json2Ddl(object):
     TODO: command line args
     """  
     
-    def __init__(self):
+    def __init__(self, tpl):
         
         """
 
         """
+        self.tpl = tpl
         
         fn = "../../models/backup/models_20140410193633.json"
         fn = "../../models/backup/models_20140425114210.json"
@@ -37,9 +38,9 @@ class Json2Ddl(object):
 
             self.d =  json.loads(models)["models"]
         
-        #loader  = FileSystemLoader("../templates")
+        loader  = FileSystemLoader("../templates")
 
-        #self.env = Environment(loader=loader, trim_blocks=True, lstrip_blocks = True)
+        self.env = Environment(loader=loader, trim_blocks=True, lstrip_blocks = True)
         
 
     
@@ -64,12 +65,16 @@ class Json2Ddl(object):
         render jinja2 templage
         """
         
-        print(tables)
+        #print(tables)
 
-        #template = self.env.get_template('pg_create_table4.sql')
         
-        tpl_path = os.sep.join([r"E:\mabodev\mabozen\mabozen\templates", "pg_create_table5_mako.sql"])
-        template = Template(filename=tpl_path,   disable_unicode=True, input_encoding='utf-8')
+        if self.tpl == "jinja":
+            tpl_path = 'pg_create_table5_jinja.sql'
+            template = self.env.get_template(tpl_path)
+        
+        else:
+            tpl_path = os.sep.join([r"E:\mabodev\mabozen\mabozen\templates", "pg_create_table5_mako.sql"])
+            template = Template(filename=tpl_path,   disable_unicode=True, input_encoding='utf-8')
 
 
         v = template.render(tables=tables)
@@ -192,7 +197,7 @@ class Json2Ddl(object):
 
 if __name__ == '__main__':
         
-        gen = Json2Ddl()
+        gen = Json2Ddl("jinja")
         
         gen.ddl_gen()
         
