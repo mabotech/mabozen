@@ -56,7 +56,7 @@ class JsonModel(object):
         
         with open(filename, 'w') as fileh:
         
-            json_str = json.dumps(models_def, sort_keys=True, indent=4, separators=(',', ': '))        
+            json_str = json.dumps(models_def, sort_keys=True, indent=2, separators=(',', ': '))        
             fileh.write(json_str) 
         
         
@@ -104,5 +104,5 @@ class JsonModel(object):
 if __name__ == "__main__":
     
     json_m = JsonModel()
-    table_names = ["address","company"]
+    table_names = ["company","facility"]
     json_m.run(table_names)

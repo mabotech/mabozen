@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-mabotech web app generator
-generate DDL (create table)
+generate DDL (CREATE TABLE)
 version: 0.0.1
 """
 import os
@@ -13,6 +12,8 @@ from jinja2 import Environment, FileSystemLoader
 
 from mako.template import Template
 from mako import exceptions
+
+from mabozen.lib.model_helpers import get_foreign_table
 
 class Json2Ddl(object):
     
@@ -109,17 +110,25 @@ class Json2Ddl(object):
         
             col = prop["column"].encode('utf8')
             
-            if prop["column"] == "textid":
+            fktab = get_foreign_table(prop["column"])
+            
+            #foreign key / serial / int4
+            if fktab:
+                col = "%s int4 /* %s */" % (prop["column"], fktab)
+            
+            # description / texths / hstore
+            elif prop["column"] == "textid":
                 
                 col = "texths hstore"
 
-                
+            # char
             elif "type" in prop and prop["type"] in ["bpchar"]:
                 #character / char
                 col = "%s char(%s)" \
                     % (prop["column"], prop["maximum_length"])
                 #character
                 #print c
+            #varchar
             elif "type" in prop and prop["type"] in ["varchar"]:
                 #character varying / varchar
                 col = "%s varchar(%s)"  \
@@ -187,7 +196,7 @@ def main():
     """ main """
     template_type = "jinja"
 
-    file_name = "../../models/backup/models_20140425114210.json"
+    file_name = "../../models/models_20140505211102.json"
     
     gen = Json2Ddl(file_name, template_type)
     

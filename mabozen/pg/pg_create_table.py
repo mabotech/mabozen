@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 
 """
-DDL for Table create, drop
-
+run ddl to CREATE TABLE
 """
 import glob
 
 import re
 
+#lib
+from mabozen.config import get_db_config
+from mabozen.config import logging
 
-import lib.pg
+logger = logging("ctab")
 
+from mabozen.zen_factory import ZenFactory
 
 def get_table_name(line):
     """
@@ -26,7 +29,7 @@ def get_table_name(line):
     return match_obj.group(1)
 
 
-class PgDDLGen(object):
+class PgTable(object):
     """
     DDL execution for table
     """
@@ -35,11 +38,16 @@ class PgDDLGen(object):
         """
         init pg db
         """
-        conn_string = "port=6432 dbname=maboss user=mabotech password=mabouser"
-        self.dbi = pg.Pg(conn_string)
+        logger.debug("init")
+        
+        ZEN_CFG = get_db_config()
+        
+        zenfactoy = ZenFactory(ZEN_CFG['DB_URL'])
+        
+        self.schema = zenfactoy.get_schema()
         
 
-
+    '''
     def exists(self, tablename):
         """
         check table exists or not
@@ -60,58 +68,59 @@ class PgDDLGen(object):
             print("%s not exists" %(tablename))
             return False
         #return True
-
+    '''
+    def data_backup(self):
+        """ rename table and insert into after new table created"""
+        pass
+        
     def drop_table(self, tablename):
-        """
-        drop table
-        """  
+        """ drop table """  
         
         try:
-        
-            sql = """drop table %s cascade""" % (tablename)
+            
+            """
+            sql = " ""drop table %s cascade"" " % (tablename)
             
             self.dbi.execute(sql)
             self.dbi.commit()
-
+            """
             sql = """drop table "%s" cascade""" % (tablename)
             
-            self.dbi.execute(sql)
-            self.dbi.commit()    
+            #self.dbi.execute(sql)
+            #self.dbi.commit()    
+            self.schema.execute_sql(sql)
         except Exception, ex:
-            self.dbi.rollback()    
+            #self.dbi.rollback()
+            self.schema.execute_sql("rollback")            
             print (ex.message)
         
         #print(sql)
         
     def rename_table(self, tablename):
-        """
-        rename table
-        """
+        """ rename table """
         
         sql = """ ALTER TABLE %s RENAME TO %s_1""" % (tablename, tablename)
-        self.dbi.execute(sql)
-        self.dbi.commit()
+        #self.dbi.execute(sql)
+        #self.dbi.commit()
+        self.schema.execute_sql(sql)
         print(sql)
+        self.schema.execute_sql(tablename)
         
     def create_table(self, tablename, ddl):
-        """
-        create table
-        """
+        """ create table """
+        
         print("create table %s" % (tablename))
-        self.dbi.execute(ddl)
-        self.dbi.commit()
+        self.schema.execute_sql(ddl)
 
-    def run(self):        
-        """
-        execute ddl sql
-        """
+    def create(self, filename):        
+        """ execute ddl sql """
         
         ddl = glob.glob("output/*.sql")
 
         #filename =  ddl[0]
         
-        filename = "../templates/pg_new.sql"
-        filename = "../output/pg_ddl_c49eca796ca91ad8d69a965f44141958.sql"
+        #filename = "../templates/pg_new.sql"
+        #filename = "../output/pg_ddl_c49eca796ca91ad8d69a965f44141958.sql"
 
         with open(filename, 'r') as fileh:
 
@@ -127,10 +136,10 @@ class PgDDLGen(object):
                     
                     tablename = get_table_name(line)
                     
-                    if self.exists(tablename):
+                    if self.schema.table_exists(tablename):
                             
-                        #self.rename_table(tablename)                        
-                        self.drop_table(tablename) 
+                        self.rename_table(tablename)                        
+                        #self.drop_table(tablename) 
                             
                     self.create_table(tablename, line)
         
@@ -138,8 +147,8 @@ class PgDDLGen(object):
         
 if __name__ == "__main__":
     
-    tab = PgDDLGen()
-    
-    tab.run()
+    tab = PgTable()
+    filename = "../../output/pg_ddl_a5ce6d7e86232a0b9f43660021bc4b3a.sql"
+    tab.create(filename)
     
     

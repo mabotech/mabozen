@@ -143,7 +143,25 @@ WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name='%s'""" % (table_name
         self.dbi.execute(sql)
         
         return self.dbi.fetchall()
-    
+        
+    def drop_cs(self, table_name):
+        
+        sql = """SELECT table_name, constraint_name
+FROM information_schema.constraint_table_usage
+WHERE table_name = '%s_1'""" %(table_name)
+        
+        self.dbi.execute(sql)
+        rows = self.dbi.fetchall()
+        
+        for row in rows:
+            sql_alter = """ALTER TABLE %s DROP CONSTRAINT %s""" % (row[0], row[1])
+            self.dbi.execute_sql(sql_alter)
+            self.dbi.commit()
+        
+        sql_drop_seq = "DROP SEQUENCE %s_seq_seq CASCADE" % (table_name)
+        self.dbi.execute_sql(sql_drop_seq)
+        self.dbi.commit()
+        
     def table_exists(self, table_name):
         """ check table exists """
         
@@ -204,6 +222,8 @@ WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name='%s'""" % (table_name
         tab["comment"] = table_name
         tab["properties"] = []
         
+        i =0
+        
         for col in cols:
             
             #filter fuid column
@@ -214,11 +234,13 @@ WHERE tc.constraint_type = 'FOREIGN KEY' AND tc.table_name='%s'""" % (table_name
                         
             attr = {}
             
-            attr["name"] = col["column_name"]
+            i = i +1
             
-            attr["column"] = col["column_name"]
+            attr["_seq"] = i
             
-            attr["comment"] = col["column_name"]
+            #attr["name"] = col["column_name"]            
+            attr["column"] = col["column_name"]            
+            #attr["comment"] = col["column_name"]
             
             if col["udt_name"] in [ "varchar", "bpchar"]:
                 #attr["type"] = "%s(%s)" % ( col["udt_name"], col["character_maximum_length"]  )
