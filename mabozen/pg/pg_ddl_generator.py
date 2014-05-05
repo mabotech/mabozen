@@ -7,59 +7,42 @@ version: 0.0.1
 import os
 
 import json
-import md5
+import hashlib
 
 from jinja2 import Environment, FileSystemLoader
+
 from mako.template import Template
 from mako import exceptions
-
 
 class Json2Ddl(object):
     
     """
     Generate DDL(create table) from JSON using mako template
-    TODO: command line args
     """  
     
-    def __init__(self, tpl):
+    def __init__(self, model_file_name, tpl_type):
         
         """
-
+        read models.json and init jinja2 template
         """
-        self.tpl = tpl
+        self.file_name = model_file_name
+        self.tpl_type = tpl_type
         
-        fn = "../../models/backup/models_20140410193633.json"
-        fn = "../../models/backup/models_20140425114210.json"
-                        
         #"models/organization.json"
-        with open(fn,"r") as fileh:
+        with open(self.file_name,"r") as fileh:
         
-            models = fileh.read()
+            models_str = fileh.read()
 
-            self.d =  json.loads(models)["models"]
+            self.models =  json.loads(models_str)["models"]
         
         loader  = FileSystemLoader("../templates")
 
-        self.env = Environment(loader=loader, trim_blocks=True, lstrip_blocks = True)
-        
+        self.env = Environment(loader=loader, trim_blocks=True, 
+                                lstrip_blocks= True)     
 
     
-    def create_index(self, index):
-        
-        """
-        
-        """
-        pass
-        
-    def create_unique_index(self, index):
-        """
-        
-        """
-        
-        pass
     
-    
-    def create_table(self, tables):
+    def save_ddl(self, tables):
             
         """
         render jinja2 templage
@@ -68,137 +51,147 @@ class Json2Ddl(object):
         #print(tables)
 
         
-        if self.tpl == "jinja":
+        if self.tpl_type == "jinja":
+            
             tpl_path = 'pg_create_table5_jinja.sql'
             template = self.env.get_template(tpl_path)
-        
+            ddl = template.render(tables=tables)
         else:
-            tpl_path = os.sep.join([r"E:\mabodev\mabozen\mabozen\templates", "pg_create_table5_mako.sql"])
-            template = Template(filename=tpl_path,   disable_unicode=True, input_encoding='utf-8')
+            
+            tpl_path = os.sep.join([r"E:\mabodev\mabozen\mabozen\templates",
+                                    "pg_create_table5_mako.sql"])
+                   
+            try:
+                template = Template(filename=tpl_path,   disable_unicode=True, 
+                                    input_encoding='utf-8')
 
 
-        v = template.render(tables=tables)
+                ddl = template.render(tables=tables)
+            
+            except Exception as ex:
+                print (ex)
+                print (exceptions.text_error_template().render())
         
-        m = md5.new()
+        md5 = hashlib.md5()
         
-        m.update(v)
+        md5.update(ddl)
         
-        h = m.hexdigest()
+        digest = md5.hexdigest()
         
         #print tables
 
-        fn = "../../output/pg_ddl_%s.sql" % ( h)
+        ddl_fn = "../../output/pg_ddl_%s.sql" % ( digest)
         
-        if os.path.exists(fn):
-            print (fn)
+        if os.path.exists(ddl_fn):
+            print (ddl_fn)
             print ("ddl exists")
         else:
-            print "gen %s" % (h)
+            print "gen %s" % (digest)
+            
+            #save ddl
+            with open(ddl_fn, 'w') as fileh:
+                ddl = ddl.replace("\r\n","\n")
+                fileh.write(ddl)
+                
+    @classmethod
+    def create_table(cls, model):
+        """ create table from model """
+        
+        table = {"table":model["_table"]}
 
-            fh = open(fn, 'w')
-            v = v.replace("\r\n","\n")
-            fh.write(v)
+        cols = []
 
-            fh.close()
+        foreign_tables = {}
+
+        unique_tables = []
+
+        for prop in model["properties"]:
+        
+            col = prop["column"].encode('utf8')
+            
+            if prop["column"] == "textid":
+                
+                col = "texths hstore"
+
+                
+            elif "type" in prop and prop["type"] in ["bpchar"]:
+                #character / char
+                col = "%s char(%s)" \
+                    % (prop["column"], prop["maximum_length"])
+                #character
+                #print c
+            elif "type" in prop and prop["type"] in ["varchar"]:
+                #character varying / varchar
+                col = "%s varchar(%s)"  \
+                    % (prop["column"], prop["maximum_length"])
+                #character
+                #print c                                    
+            else:
+                if "type" in prop:
+                    #sql = sql + 
+                    ctype = " %s" % (prop["type"])
+                    col = col + ctype.encode('utf8')
+                else:
+                    col = col + " %s" % ("int4") # FK
+                    
+                    foreign_tables[prop["toOne"]] = \
+                            prop["column"].encode('utf8')
+
+                if "required" in prop:
+                    col = col + " NOT NULL"
+                else:
+                    pass #col = col + ""
+                if "isUnique" in prop:
+                    if prop["isUnique"] == True:
+                        unique_tables.append(prop["column"])
+            cols.append(col)
     
+        table["column_defs"] = cols
 
-    def ddl_gen(self):                
+        return table
+    
+    def create_ddl(self):                
         """
         create table
         """            
         tables = []
 
-        for m in self.d:
+        for model in self.models:
             
-            table = {"table":m["_table"]}
-
-            cols = []
-
-            toOne = {}
-
-            unique = []
-
-            sql = "\n"
-            sql = sql + "-- Table:  %s\n"  %(m["_table"])
-            sql_drop = "DROP TABLE %s;"  %(m["_table"])
-            sql = sql +  "CREATE TABLE %s\n(\n" %(m["_table"])
-            sql = sql +  "id serial NOT NULL,\n"
-
-            for c in m["properties"]:
-            
-                col = c["column"].encode('utf8')
-                
-                if c["column"] == "textid":
-                    
-                    col = "texths hstore"
-                    pass
-                    
-                elif "type" in c and c["type"] in ["bpchar"]:
-                    col = "%s char(%s)"  % (c["column"], c["maximum_length"])  #character / char
-                    #character
-                    #print c
-                elif "type" in c and c["type"] in ["varchar"]:
-                    col = "%s varchar(%s)"  % (c["column"], c["maximum_length"])  #character varying / varchar
-                    #character
-                    #print c                                    
-                else:
-                    if "type" in c:
-                        #sql = sql + 
-                        v = " %s" % (c["type"])
-                        col = col + v.encode('utf8')
-                    else:
-                        col = col + " %s"%("int4") # FK
-                        
-                        toOne[c["toOne"]] = c["column"].encode('utf8')
-
-                    if "required" in c:
-                        col = col + " NOT NULL"
-                    else:
-                        pass #col = col + ""
-                    if "isUnique" in c:
-                        if c["isUnique"] == True:
-                            unique.append(c["column"])
-                
-                
-                cols.append(col)
-            table["column_defs"] = cols
+            table = self.create_table(model)
             
             tables.append(table)
 
-        self.create_table(tables)
+        self.save_ddl(tables)
 
-        for u in unique:
-            #print "CREATE UNIQUE INDEX idx_%s_%s ON %s (%s)" % (u, m["table"], u, u)
-            pass
-        pass
-
-        for t in toOne:
+    @classmethod
+    def create_index(cls, unique_tables):
+        """create unique index """
+        for unique in unique_tables:
+            #print "CREATE UNIQUE INDEX idx_%s_%s ON %s (%s)" 
+            # % (u, m["table"], u, u)
+            print unique
+    @classmethod
+    def create_fk(cls, foreign_tables):
+        """ create foreign key"""
+        
+        for f_table in foreign_tables:
             sql =  """ALTER TABLE %s 
-        ADD CONSTRAINT fk_%s_%s FOREIGN KEY  (%s) REFERENCES %s (id);\n""" %(m["_table"], m["_table"],  t,toOne[t],t)
-        #print sql
+        ADD CONSTRAINT fk_%s_%s FOREIGN KEY  (%s) REFERENCES %s (id);
+        """ % (f_table, f_table, f_table, foreign_tables[f_table], f_table)
+            
+            print sql
         #print "COMMENT ON COLUMN area.site_id IS 'site';"
-    
-    """
-    procedure generator
-    """
-    def pl_gen(self):
-        pass
-    
-    """
-    form
-    """
-    def form_gen(self):
-        tpl = """<form>
-{{}}</form>"""
         
-        for m in self.d:
-            print(m)
-        pass
+def main():
+    """ main """
+    template_type = "jinja"
 
+    file_name = "../../models/backup/models_20140425114210.json"
+    
+    gen = Json2Ddl(file_name, template_type)
+    
+    gen.create_ddl()
+        
 if __name__ == '__main__':
-        
-        gen = Json2Ddl("jinja")
-        
-        gen.ddl_gen()
-        
-        #gen.form_gen()
+    main()
