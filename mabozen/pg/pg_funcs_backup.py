@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-pg function backup and load
+backup PostgreSQL functions from db information schema
 
 """
 import os

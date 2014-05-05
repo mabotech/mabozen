@@ -2,7 +2,7 @@
 
 
 """
-PostgreSQL Schema infomation
+get PostgreSQL schema information from db information schema
 """
 
 import logging

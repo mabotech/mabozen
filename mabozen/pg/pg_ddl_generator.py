@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 mabotech web app generator
+generate DDL (create table)
 version: 0.0.1
 """
 import os
@@ -16,6 +17,7 @@ from mako import exceptions
 class Json2Ddl(object):
     
     """
+    Generate DDL(create table) from JSON using mako template
     TODO: command line args
     """  
     

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-load function
+load PostgreSQL function (create or replace function) from certain folder.
 
 glob filename, read sql and compare hash with same name function in db.
 
@@ -25,7 +25,7 @@ logger = logging("zen_loader")
 
 from mabozen.pg_schema import PgSchema
 
-class PgDeployer(object):
+class PgFuncsDeployer(object):
     """ class """
     
     def __init__(self):
@@ -69,12 +69,12 @@ class PgDeployer(object):
                 #logger.info("%s exists " % (function_name))
                 pass
                 
-    def func_deploy(self):
+    def func_deploy(self, func_pattern):
         """run load"""
         
         funcs_dict = {}
 
-        functions = glob.glob(r"E:\mabodev\maboss\database\functions\*.sql")
+        functions = glob.glob(func_pattern)
 
         for func in functions:
             
@@ -106,8 +106,12 @@ class PgDeployer(object):
            
 def main():
     """ main """
-    deployer = PgDeployer()
-    deployer.func_deploy()
+    
+    deployer = PgFuncsDeployer()
+    
+    func_pattern = r"E:\mabodev\maboss\database\functions\*.sql"
+    
+    deployer.func_deploy(func_pattern)
     
     
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+## -- mako template for ddl
 -- mabozen: mabotech app generator
 
 %for table in tables:
