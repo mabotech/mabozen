@@ -20,7 +20,7 @@ def get_table_name(line):
     get table name from ddl scripts(sql)
     """
     
-    rawstr = r"""CREATE TABLE\s(\w+)\s?"""
+    rawstr = r"""create table\s(\w+)\s?"""
 
     compile_obj = re.compile(rawstr,   re.MULTILINE)
     
@@ -116,7 +116,7 @@ class PgTable(object):
         """ execute ddl sql """
         
         ddl = glob.glob("output/*.sql")
-
+        
         #filename =  ddl[0]
         
         #filename = "../templates/pg_new.sql"
@@ -126,20 +126,27 @@ class PgTable(object):
 
             scripts = fileh.read()
             
+            scripts = scripts.lower()
+            
             scripts = scripts.replace('"', '')
 
             script_array  = scripts.split(';')
 
             for line in script_array:
                 
+                print line
+                
                 if len(line) > 10:
                     
                     tablename = get_table_name(line)
                     
-                    if self.schema.table_exists(tablename):
+                    if self.schema.table_exists(tablename.lower()):
                             
-                        self.rename_table(tablename)                        
-                        #self.drop_table(tablename) 
+                        #self.rename_table(tablename)
+                        print "drop %s" %(tablename)                        
+                        self.drop_table(tablename) 
+                    else:
+                        print "new %s" %(tablename)
                             
                     self.create_table(tablename, line)
         
@@ -149,6 +156,7 @@ if __name__ == "__main__":
     
     tab = PgTable()
     filename = "../../output/pg_ddl_a5ce6d7e86232a0b9f43660021bc4b3a.sql"
+    filename = "../../models/pg_new.sql"
     tab.create(filename)
     
     

@@ -60,7 +60,7 @@ class Json2Ddl(object):
         else:
             
             tpl_path = os.sep.join([r"E:\mabodev\mabozen\mabozen\templates",
-                                    "pg_create_table5_mako.sql"])
+                                    "pg_create_table6_mako.sql"])
                    
             try:
                 template = Template(filename=tpl_path,   disable_unicode=True, 
@@ -95,6 +95,14 @@ class Json2Ddl(object):
                 fileh.write(ddl)
                 
     @classmethod
+    def create_type(cls, prop):
+        """ varchar(32) """
+        if prop["type"] in ["bpchar", "char", "varchar"]:
+            return "%s(%s)" % (prop["type"], prop["maximum_length"])
+        else:
+            return prop["type"]
+        
+    @classmethod
     def create_table(cls, model):
         """ create table from model """
         
@@ -110,11 +118,15 @@ class Json2Ddl(object):
         
             col = prop["column"].encode('utf8')
             
-            fktab = get_foreign_table(prop["column"])
+            #fktab = get_foreign_table(prop["column"])
             
+            if "pk" in prop:
+                col = "%s %s" % ("id",cls.create_type(prop))                
             #foreign key / serial / int4
-            if fktab:
-                col = "%s int4 /* %s */" % (prop["column"], fktab)
+            elif "fk" in prop:
+                #print prop
+                
+                col = "%s %s /* %s.%s */" % (prop["column"],cls.create_type(prop), prop["ref"]["table"],prop["ref"]["column"])
             
             # description / texths / hstore
             elif prop["column"] == "textid":
@@ -146,13 +158,13 @@ class Json2Ddl(object):
                     foreign_tables[prop["toOne"]] = \
                             prop["column"].encode('utf8')
 
-                if "required" in prop:
-                    col = col + " NOT NULL"
-                else:
-                    pass #col = col + ""
-                if "isUnique" in prop:
-                    if prop["isUnique"] == True:
-                        unique_tables.append(prop["column"])
+            if "required" in prop:
+                col = col + " NOT NULL"
+            else:
+                pass #col = col + ""
+            if "isUnique" in prop:
+                if prop["isUnique"] == True:
+                    unique_tables.append(prop["column"])
             cols.append(col)
     
         table["column_defs"] = cols
@@ -194,9 +206,9 @@ class Json2Ddl(object):
         
 def main():
     """ main """
-    template_type = "jinja"
+    template_type = "mako"
 
-    file_name = "../../models/models_20140505211102.json"
+    file_name = "../../models/models_20140506145407.json"
     
     gen = Json2Ddl(file_name, template_type)
     

@@ -1,9 +1,11 @@
 mabozen
 =======
 
-mabotech web app generator.
+mabotech web app generator, model driven.
 
 generate code from json model to pg ddl, pg function, javascript and html, etc.
+
+Domain-Driven in future.
 
 schema defination
 

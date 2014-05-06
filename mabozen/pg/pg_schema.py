@@ -188,7 +188,7 @@ WHERE table_name = '%s_1'""" %(table_name)
         
         json_str = json.dumps(params)
         
-        sql = """ select mtp_get_schema('%s') """ % (json_str)
+        sql = """ select mtp_get_schema_cs4('%s') """ % (json_str)
         logger.debug(sql)
         
         self.dbi.execute(sql)
@@ -222,26 +222,39 @@ WHERE table_name = '%s_1'""" %(table_name)
         tab["comment"] = table_name
         tab["properties"] = []
         
-        i =0
-        
         for col in cols:
             
             #filter fuid column
             if col["column_name"] == 'fuid':
-                continue
+                #continue
+                pass
             
             # convert
                         
             attr = {}
             
-            i = i +1
+            attr["_pos"] = col["ordinal_position"]
             
-            attr["_seq"] = i
-            
-            #attr["name"] = col["column_name"]            
+            #attr["name"] = col["column_name"]   
+
+            if col["column_name"] == "textid":
+                attr["column"] = "texths"
+                attr["type"] = "hstore"
+                tab["properties"].append(attr)
+                continue
+                
             attr["column"] = col["column_name"]            
             #attr["comment"] = col["column_name"]
             
+            if col["constraint_type"] == "F":
+                attr["fk"] = True
+                attr["ref"] = {}
+                attr["ref"]["table"] = col["co_table_name"]
+                attr["ref"]["column"] = col["co_column_name"]
+            elif col["constraint_type"] == "P":
+                attr["pk"] = True
+
+                
             if col["udt_name"] in [ "varchar", "bpchar"]:
                 #attr["type"] = "%s(%s)" % ( col["udt_name"], col["character_maximum_length"]  )
                 attr["type"] = col["udt_name"]
