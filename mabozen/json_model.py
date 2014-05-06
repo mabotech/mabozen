@@ -44,7 +44,10 @@ class JsonModel(object):
         save models in json file
         """
         
-        #save_models(filename, models)       
+        #save_models(filename, models) 
+        
+        if type(table_names[0]) != str:
+            table_names = map(lambda tab : tab[0], table_names)
         
         info = {"_version":"0.2", "by":"mabozen","tables":table_names}    
         models_def = {"info":info,"models":models}
@@ -66,8 +69,10 @@ class JsonModel(object):
         
         for tabname in table_names:
             
+            #from []
             if type(tabname) == str:                
                 table_name = tabname                
+            #from sql query
             else:            
                 table_name = tabname[0]
                 
@@ -98,11 +103,12 @@ class JsonModel(object):
             table_names =self.schema.get_tables()
             
         models = self.query(table_names)
+
         self._save_json(table_names, models)     
 
             
 if __name__ == "__main__":
     
     json_m = JsonModel()
-    table_names = ["company","facility"]
+    table_names =[]# ["company","facility"]
     json_m.run(table_names)

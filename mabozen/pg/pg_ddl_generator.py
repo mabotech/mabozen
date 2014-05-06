@@ -8,12 +8,14 @@ import os
 import json
 import hashlib
 
+from time import strftime, localtime
+
 from jinja2 import Environment, FileSystemLoader
 
 from mako.template import Template
 from mako import exceptions
 
-from mabozen.lib.model_helpers import get_foreign_table
+#from mabozen.lib.model_helpers import get_foreign_table
 
 class Json2Ddl(object):
     
@@ -40,13 +42,14 @@ class Json2Ddl(object):
 
         self.env = Environment(loader=loader, trim_blocks=True, 
                                 lstrip_blocks= True)     
-
+        
+        self.fk_constraints = []
     
     
-    def save_ddl(self, tables):
+    def _save_ddl(self, tables):
             
         """
-        render jinja2 templage
+        render jinja2/mako templage
         """
         
         #print(tables)
@@ -65,7 +68,6 @@ class Json2Ddl(object):
             try:
                 template = Template(filename=tpl_path,   disable_unicode=True, 
                                     input_encoding='utf-8')
-
 
                 ddl = template.render(tables=tables)
             
@@ -95,15 +97,14 @@ class Json2Ddl(object):
                 fileh.write(ddl)
                 
     @classmethod
-    def create_type(cls, prop):
+    def _create_type(cls, prop):
         """ varchar(32) """
         if prop["type"] in ["bpchar", "char", "varchar"]:
             return "%s(%s)" % (prop["type"], prop["maximum_length"])
         else:
-            return prop["type"]
-        
-    @classmethod
-    def create_table(cls, model):
+            return prop["type"]        
+
+    def _create_table(self, model):
         """ create table from model """
         
         table = {"table":model["_table"]}
@@ -121,12 +122,23 @@ class Json2Ddl(object):
             #fktab = get_foreign_table(prop["column"])
             
             if "pk" in prop:
-                col = "%s %s" % ("id",cls.create_type(prop))                
+                pkval = prop["pk"]
+            else:
+                pkval = False
+            
+            if pkval or prop["column"] =='id':
+                col = "%s %s" % ("id", self._create_type(prop))                
             #foreign key / serial / int4
             elif "fk" in prop:
                 #print prop
                 
-                col = "%s %s /* %s.%s */" % (prop["column"],cls.create_type(prop), prop["ref"]["table"],prop["ref"]["column"])
+                self.fk_constraints.append({"table":model["_table"], \
+                    "column":prop["column"], "f_tab":prop["ref"]["table"], \
+                    "f_col":prop["ref"]["column"]})
+                
+                col = "%s %s /* %s.%s */" % (prop["column"], \
+                    self._create_type(prop), \
+                    prop["ref"]["table"],prop["ref"]["column"])
             
             # description / texths / hstore
             elif prop["column"] == "textid":
@@ -179,11 +191,11 @@ class Json2Ddl(object):
 
         for model in self.models:
             
-            table = self.create_table(model)
+            table = self._create_table(model)
             
             tables.append(table)
 
-        self.save_ddl(tables)
+        self._save_ddl(tables)
 
     @classmethod
     def create_index(cls, unique_tables):
@@ -192,27 +204,42 @@ class Json2Ddl(object):
             #print "CREATE UNIQUE INDEX idx_%s_%s ON %s (%s)" 
             # % (u, m["table"], u, u)
             print unique
-    @classmethod
-    def create_fk(cls, foreign_tables):
+
+    def create_fk(self):
         """ create foreign key"""
-        
-        for f_table in foreign_tables:
-            sql =  """ALTER TABLE %s 
-        ADD CONSTRAINT fk_%s_%s FOREIGN KEY  (%s) REFERENCES %s (id);
-        """ % (f_table, f_table, f_table, foreign_tables[f_table], f_table)
+        i = 0
+        scripts = []
+        for cons in self.fk_constraints:
             
-            print sql
+            # drop constraint firstly?
+            
+            sql =  """ALTER TABLE %s ADD CONSTRAINT fk_%s_%02d FOREIGN KEY  (%s) REFERENCES %s (%s)""" \
+            % (cons["table"], cons["table"], i, cons["column"], \
+                cons["f_tab"], cons["f_col"])
+            
+            scripts.append(sql)
+            
+            i = i +1
+        
+        
+        fn = "../../output/pg_fk_%s.sql" % (strftime("%Y%m%d%H%M%S", localtime()))
+        print fn
+        with open(fn, 'w') as fileh:
+            fileh.write(";\n\n".join(scripts))
         #print "COMMENT ON COLUMN area.site_id IS 'site';"
         
 def main():
     """ main """
     template_type = "mako"
 
-    file_name = "../../models/models_20140506145407.json"
+    file_name = "../../models/models_20140506172541.json"
+    file_name ="../../models/models_20140506220048.json"
     
     gen = Json2Ddl(file_name, template_type)
     
     gen.create_ddl()
+    
+    gen.create_fk()
         
 if __name__ == '__main__':
     main()

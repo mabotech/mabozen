@@ -26,7 +26,10 @@ def get_table_name(line):
     
     match_obj = compile_obj.search(line)
     
-    return match_obj.group(1)
+    if match_obj:
+        return match_obj.group(1)
+    else:
+        return None
 
 
 class PgTable(object):
@@ -140,6 +143,9 @@ class PgTable(object):
                     
                     tablename = get_table_name(line)
                     
+                    if not tablename:
+                        continue
+                    
                     if self.schema.table_exists(tablename.lower()):
                             
                         #self.rename_table(tablename)
@@ -157,6 +163,7 @@ if __name__ == "__main__":
     tab = PgTable()
     filename = "../../output/pg_ddl_a5ce6d7e86232a0b9f43660021bc4b3a.sql"
     filename = "../../models/pg_new.sql"
+    filename = "../../output/pg_ddl_6db627919bbe7ef7da4d3636ca738d2f.sql"
     tab.create(filename)
     
     
