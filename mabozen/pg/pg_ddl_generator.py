@@ -63,7 +63,7 @@ class Json2Ddl(object):
         else:
             
             tpl_path = os.sep.join([r"E:\mabodev\mabozen\mabozen\templates",
-                                    "pg_create_table6_mako.sql"])
+                                    "pg_create_table7_mako.sql"])
                    
             try:
                 template = Template(filename=tpl_path,   disable_unicode=True, 
@@ -85,8 +85,10 @@ class Json2Ddl(object):
 
         ddl_fn = "../../output/pg_ddl_%s.sql" % ( digest)
         
+        print (ddl_fn)
+        
         if os.path.exists(ddl_fn):
-            print (ddl_fn)
+            
             print ("ddl exists")
         else:
             print "gen %s" % (digest)
@@ -95,6 +97,10 @@ class Json2Ddl(object):
             with open(ddl_fn, 'w') as fileh:
                 ddl = ddl.replace("\r\n","\n")
                 fileh.write(ddl)
+                
+        with open("ddl_table.txt",'w') as fileh:
+            #logger.debug(ddl_fn)
+            fileh.write(ddl_fn) 
                 
     @classmethod
     def _create_type(cls, prop):
@@ -127,7 +133,8 @@ class Json2Ddl(object):
                 pkval = False
             
             if pkval or prop["column"] =='id':
-                col = "%s %s" % ("id", self._create_type(prop))                
+                col = "%s %s" % (prop["column"], self._create_type(prop))
+                table["pk_column"] = prop["column"]
             #foreign key / serial / int4
             elif "fk" in prop:
                 #print prop
@@ -190,10 +197,20 @@ class Json2Ddl(object):
         tables = []
 
         for model in self.models:
-            
-            table = self._create_table(model)
-            
-            tables.append(table)
+            if model["_table"] == "not a table":
+                continue
+            else:
+                #print model
+                #print ( json.dumps(model, sort_keys=True, indent=2, separators=(',', ': '))  )
+                try:
+                    table = self._create_table(model)
+                
+                    tables.append(table)
+                except Exception as ex:
+                    #print model
+                    print ( json.dumps(model, sort_keys=True, indent=2, separators=(',', ': '))  )
+                    print ex.message
+                    raise Exception("error")
 
         self._save_ddl(tables)
 
@@ -209,12 +226,22 @@ class Json2Ddl(object):
         """ create foreign key"""
         i = 0
         scripts = []
+        
+        fk_tables = {}
+        
         for cons in self.fk_constraints:
             
             # drop constraint firstly?
             
+            if cons["table"] in fk_tables:
+                fk_tables[cons["table"]] = fk_tables[cons["table"]] +1
+                seq = fk_tables[cons["table"]]
+            else:
+                fk_tables[cons["table"]] = 0
+                seq = 0
+            
             sql =  """ALTER TABLE %s ADD CONSTRAINT fk_%s_%02d FOREIGN KEY  (%s) REFERENCES %s (%s)""" \
-            % (cons["table"], cons["table"], i, cons["column"], \
+            % (cons["table"], cons["table"], seq, cons["column"], \
                 cons["f_tab"], cons["f_col"])
             
             scripts.append(sql)
@@ -223,17 +250,24 @@ class Json2Ddl(object):
         
         
         fn = "../../output/pg_fk_%s.sql" % (strftime("%Y%m%d%H%M%S", localtime()))
-        print fn
+
         with open(fn, 'w') as fileh:
             fileh.write(";\n\n".join(scripts))
+            
+        with open("ddl_fk.txt",'w') as fileh:
+            #logger.debug(fn)
+            fileh.write(fn)             
         #print "COMMENT ON COLUMN area.site_id IS 'site';"
         
 def main():
     """ main """
     template_type = "mako"
 
-    file_name = "../../models/models_20140506172541.json"
-    file_name ="../../models/models_20140506220048.json"
+    #file_name = "../../models/models_20140506172541.json"
+    #file_name ="../../models/models_all.json"
+    
+    with open("../models_last.txt",'r') as fileh:
+        file_name = os.sep.join(["..",fileh.read()])
     
     gen = Json2Ddl(file_name, template_type)
     

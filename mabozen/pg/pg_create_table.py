@@ -171,9 +171,21 @@ class PgTable(object):
 if __name__ == "__main__":
     
     tab = PgTable()
-    filename = "../../output/pg_ddl_a5ce6d7e86232a0b9f43660021bc4b3a.sql"
-    filename = "../../models/pg_new.sql"
-    #filename = "../../output/pg_ddl_6db627919bbe7ef7da4d3636ca738d2f.sql"
-    tab.create(filename)
+
+    file_name = "../../models/pg_new.sql"
+    
+    with open("ddl_table.txt",'r') as fileh:
+        
+        file_name = fileh.read()
+        print(file_name)
+    
+    tab.create(file_name)
+    
+    with open("ddl_fk.txt",'r') as fileh:
+        
+        file_name = fileh.read()    
+        print(file_name)
+    
+    tab.create(file_name)    
     
     

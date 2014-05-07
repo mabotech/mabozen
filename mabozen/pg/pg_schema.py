@@ -188,7 +188,7 @@ WHERE table_name = '%s_1'""" %(table_name)
         
         json_str = json.dumps(params)
         
-        sql = """ select mtp_get_schema_pg8('%s') """ % (json_str)
+        sql = """ select mtp_get_schema_pg4('%s') """ % (json_str)
         logger.debug(sql)
         
         self.dbi.execute(sql)
@@ -203,110 +203,6 @@ WHERE table_name = '%s_1'""" %(table_name)
         self.dbi.execute(sql)
         self.dbi.commit()
         
-    @classmethod    
-    def build_model(cls, table_name, cols):
-
-        """
-        build dict
-        """
-
-        """
-        {"table":"company",
-    "properties":[
-    {"name":"company", "column":"company", "type":"varchar(10)", "required":true, "isUnique":true},
-    {"name":"text", "column":"texths",  "type":"hstore"}
-    ]
-    }
-        """
-        
-        tab = {"_table":table_name}
-        tab["comment"] = table_name
-        tab["properties"] = []
-        
-        #original pk
-        tab["o_pk"] = []
-        
-        pset = set()
-        
-        for col in cols:
-            
-            #print(col)
-            #filter fuid column
-            if col["column_name"] == 'fuid':
-                #continue
-                pass
-            
-            # convert
-                        
-            attr = {}
-            
-            o_pos = col["ordinal_position"]
-            
-            attr["_pos"] = o_pos
-            
-            if o_pos not in pset:
-                pset.add(o_pos)
-            else:
-                continue
-          
-            
-            #attr["name"] = col["column_name"]   
-
-            if col["column_name"] == "textid":
-                attr["column"] = "texths"
-                attr["type"] = "hstore"
-                tab["properties"].append(attr)
-                continue
-                
-            attr["column"] = col["column_name"]            
-            #attr["comment"] = col["column_name"]
-            
-            if col["constraint_type"] == "F":
-                attr["fk"] = True
-                attr["ref"] = {}
-                attr["ref"]["table"] = col["co_table_name"]
-                attr["ref"]["column"] = col["co_column_name"]
-            elif col["constraint_type"] == "P":
-                attr["pk"] = True
-                tab["o_pk"].append(col["column_name"] )
-
-                
-            if col["data_type"] in [ "varchar", "bpchar"]:
-                #attr["type"] = "%s(%s)" % ( col["udt_name"], col["character_maximum_length"]  )
-                attr["type"] = col["data_type"]
-                if col["character_maximum_length"] == None:
-                    attr["maximum_length"] = 30
-                else:
-                    attr["maximum_length"] = col["character_maximum_length"]
-                
-            else:
-                attr["type"] = col["data_type"]
-                
-            #if col["isUnique"] == "NO":
-            #     attr["unique"] = True
-            
-            if col["is_nullable"] == True:
-                attr["required"] = True
-            
-            tab["properties"].append(attr)           
-        
-        pkcount = len(tab["o_pk"])
-        
-        if pkcount>1:
-        
-            for i in range(0, pkcount):
-                tab["properties"][i]["pk"]=False
-            
-            pk =  {
-              "_pos": "0",
-              "column": "id",
-              "pk": true,
-              "required": true,
-              "type": "int4"
-            }
-            tab["properties"].insert(0, pk)
-            
-        return tab 
         
     
         
