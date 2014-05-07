@@ -106,7 +106,7 @@ class PgTable(object):
         #self.dbi.execute(sql)
         #self.dbi.commit()
         self.schema.execute_sql(sql)
-        print(sql)
+        #print(sql)
         self.schema.execute_sql(tablename)
         
     def create_table(self, tablename, ddl):
@@ -114,6 +114,15 @@ class PgTable(object):
         
         print("create table %s" % (tablename))
         self.schema.execute_sql(ddl)
+        
+    def create_obj(self, ddl):
+        """ create fk, unique index, index, etc."""
+        try:
+            self.schema.execute_sql(ddl)
+        except Exception as ex:
+            self.schema.execute_sql("rollback")
+            print(ddl)
+            print(ex.message)
 
     def create(self, filename):        
         """ execute ddl sql """
@@ -137,13 +146,14 @@ class PgTable(object):
 
             for line in script_array:
                 
-                print line
+                #print line
                 
                 if len(line) > 10:
                     
                     tablename = get_table_name(line)
                     
                     if not tablename:
+                        self.create_obj(line)
                         continue
                     
                     if self.schema.table_exists(tablename.lower()):
@@ -163,7 +173,7 @@ if __name__ == "__main__":
     tab = PgTable()
     filename = "../../output/pg_ddl_a5ce6d7e86232a0b9f43660021bc4b3a.sql"
     filename = "../../models/pg_new.sql"
-    filename = "../../output/pg_ddl_6db627919bbe7ef7da4d3636ca738d2f.sql"
+    #filename = "../../output/pg_ddl_6db627919bbe7ef7da4d3636ca738d2f.sql"
     tab.create(filename)
     
     
