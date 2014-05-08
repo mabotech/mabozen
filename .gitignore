@@ -16,6 +16,9 @@ mabozen_config.py
 #backup
 backup/
 
+#working
+working/
+
 #output
 output/
 

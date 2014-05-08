@@ -281,9 +281,9 @@ class JsonModel(object):
         info = {"_version":"0.2", "by":"mabozen","tables":table_names}    
         models_def = {"info":info,"models":models}
         
-        filename = "../models/models_%s.json" % (strftime("%Y%m%d%H%M%S", localtime()))
+        filename = "../working/models/models_%s.json" % (strftime("%Y%m%d%H%M%S", localtime()))
         
-        with open("models_last.txt",'w') as fileh:
+        with open("../working/models_last.txt",'w') as fileh:
             logger.debug(filename)
             fileh.write(filename)   
         

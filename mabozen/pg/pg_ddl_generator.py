@@ -83,7 +83,7 @@ class Json2Ddl(object):
         
         #print tables
 
-        ddl_fn = "../../output/pg_ddl_%s.sql" % ( digest)
+        ddl_fn = "../../working/output/pg_ddl_%s.sql" % ( digest)
         
         print (ddl_fn)
         
@@ -98,7 +98,7 @@ class Json2Ddl(object):
                 ddl = ddl.replace("\r\n","\n")
                 fileh.write(ddl)
                 
-        with open("ddl_table.txt",'w') as fileh:
+        with open("../../working/ddl_table.txt",'w') as fileh:
             #logger.debug(ddl_fn)
             fileh.write(ddl_fn) 
                 
@@ -249,12 +249,12 @@ class Json2Ddl(object):
             i = i +1
         
         
-        fn = "../../output/pg_fk_%s.sql" % (strftime("%Y%m%d%H%M%S", localtime()))
+        fn = "../../working/output/pg_fk_%s.sql" % (strftime("%Y%m%d%H%M%S", localtime()))
 
         with open(fn, 'w') as fileh:
             fileh.write(";\n\n".join(scripts))
             
-        with open("ddl_fk.txt",'w') as fileh:
+        with open("../../working/ddl_fk.txt",'w') as fileh:
             #logger.debug(fn)
             fileh.write(fn)             
         #print "COMMENT ON COLUMN area.site_id IS 'site';"
@@ -266,7 +266,7 @@ def main():
     #file_name = "../../models/models_20140506172541.json"
     #file_name ="../../models/models_all.json"
     
-    with open("../models_last.txt",'r') as fileh:
+    with open("../../working/models_last.txt",'r') as fileh:
         file_name = os.sep.join(["..",fileh.read()])
     
     gen = Json2Ddl(file_name, template_type)
