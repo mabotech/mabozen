@@ -78,12 +78,14 @@ $BODY$%(body)s$BODY$
             fileh.write(sql)
             
     @classmethod
-    def _save_coffee(cls, full_filename, func_dict):            
+    def _save_function(cls, full_filename, func_dict):            
         """
         save coffee
         """
         
-        with open(full_filename.replace(".sql",".coffee"), 'w') as fileh:
+        ext = "."+func_dict["language"][2:]
+        
+        with open(full_filename.replace(".sql",ext), 'w') as fileh:
             
             fileh.write(func_dict["body"])
         
@@ -94,8 +96,8 @@ $BODY$%(body)s$BODY$
         filename = "%s.sql" % (func_dict["name"])
         
         full_filename = os.sep.join([self.function_root, filename])
-        
-        self._save_coffee(full_filename, func_dict)
+        print(full_filename)
+        self._save_function(full_filename, func_dict)
         
         if os.path.exists(full_filename):
             
@@ -151,7 +153,6 @@ $BODY$%(body)s$BODY$
             
             try:
                 func_dict = self.schema.function_info(fname) #self.query_source(fname)
-            
                 self.save(func_dict)
                 
             except Exception, ex:
