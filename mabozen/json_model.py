@@ -343,5 +343,8 @@ class JsonModel(object):
 if __name__ == "__main__":
     
     json_m = JsonModel()
-    table_names = [] # ["company","facility","text_translation","work_shift"]
+    
+    table_names =  ["company","division", "facility","department",  \
+        "wip_line", "line","work_center","cost_center"] #["text_translation","work_shift"]
+        
     json_m.run(table_names)

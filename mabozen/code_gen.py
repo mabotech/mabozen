@@ -140,7 +140,7 @@ if __name__ == "__main__":
     
     gen = CodeGen(addons)
     
-    filename = "../models/backup/models_20140425114210.json"
+    #filename = "../models/backup/models_20140425114210.json"
     #filename = "../models/organization.json"
-    
+    filename = "../working/models/models_20140508103539.json"
     gen.run(filename)

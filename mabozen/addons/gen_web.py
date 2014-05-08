@@ -7,6 +7,8 @@ import os
 import hashlib
 import logging
 
+import json
+
 from mako.template import Template
 from mako import exceptions
 
@@ -89,6 +91,9 @@ def gen_web(conf, table_name, attrs):
     """
     
     #gen form
+    
+    print(table_name)
+    print(json.dumps(attrs, sort_keys=True, indent=2, separators=(',', ': '))  )
     
     jslib = "angular"
     
