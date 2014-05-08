@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 """ frontend helper """
+
 import json
-
 from collections import OrderedDict
-
 
 #from itertools import imap
 
 class AttrsHelper(object):
     """ form / list attributes helper """
+    
     def __init__(self, indent):
         """ init """
         
@@ -33,6 +33,7 @@ class AttrsHelper(object):
     
     def prepare(self, table_name, attrs):
         """ prepare data """
+        
         for attr in attrs:
             
             col = attr["column"]
@@ -56,6 +57,7 @@ class AttrsHelper(object):
         
     def make_model_def(self, table_name):
         """ make model defination """
+        
         obj = OrderedDict(self.attr_list)
         
         obj_str = "".join([table_name, " = \n", json.dumps(obj, \
