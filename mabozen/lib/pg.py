@@ -4,6 +4,14 @@
 
 import psycopg2
 
+from mabozen.lib.url import parse_rfc1738_args
+
+def parse_url(db_url):
+    """parse url"""
+    components = parse_rfc1738_args(db_url)
+    
+    return components
+
 class Pg(object):
     """ PostgreSQL proxy """
     def __init__(self, components):
@@ -11,6 +19,9 @@ class Pg(object):
         initialize
         libpg: http://www.postgresql.org/docs/current/static/libpq-connect.html
         """
+        
+        #components = parse_url(db_url)
+        
         host = components["host"]
         port = components["port"]
         database = components["database"]

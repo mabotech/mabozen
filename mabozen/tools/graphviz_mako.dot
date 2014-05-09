@@ -1,0 +1,17 @@
+digraph G {
+
+rankdir=BT;
+
+node[style=filled,color=lightskyblue]
+
+/* nodes */
+%for node in nodes:
+
+${node}[style=filled,color=lawngreen];
+%endfor
+
+/* edges */
+%for edge in edges:
+${edge}
+%endfor
+}

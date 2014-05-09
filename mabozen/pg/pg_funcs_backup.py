@@ -96,7 +96,7 @@ $BODY$%(body)s$BODY$
         filename = "%s.sql" % (func_dict["name"])
         
         full_filename = os.sep.join([self.function_root, filename])
-        print(full_filename)
+        #print(full_filename)
         self._save_function(full_filename, func_dict)
         
         if os.path.exists(full_filename):

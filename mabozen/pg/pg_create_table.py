@@ -88,7 +88,7 @@ class PgTable(object):
             self.dbi.commit()
             """
             sql = """drop table "%s" cascade""" % (tablename)
-            
+            print(sql)
             #self.dbi.execute(sql)
             #self.dbi.commit()    
             self.schema.execute_sql(sql)
@@ -119,12 +119,13 @@ class PgTable(object):
         """ create fk, unique index, index, etc."""
         try:
             
-            print(ddl)
+            #print(ddl)
             self.schema.execute_sql(ddl)
         except Exception as ex:
             self.schema.execute_sql("rollback")
             print(ddl)
             print(ex.message)
+            #raise
 
     def create(self, filename):        
         """ execute ddl sql """
@@ -148,14 +149,14 @@ class PgTable(object):
 
             for line in script_array:
                 
-                print line
+                #print line
                 
                 if len(line) > 10:
                     
                     tablename = get_table_name(line)
                     
-                    if tablename not in ["job_pool", "job_queue" ] and tablename != None:
-                        continue
+                    #if tablename not in ["job_pool", "job_queue" ] and tablename != None:
+                    #    continue
                     
                     if not tablename:
                         self.create_obj(line)
@@ -177,14 +178,14 @@ if __name__ == "__main__":
     
     tab = PgTable()
 
-    file_name = "../../models/pg_new.sql"
+    file_name1 = "../../models/pg_new.sql"
     
     with open("../../working/ddl_table.txt",'r') as fileh:
         
         file_name = fileh.read()
         print(file_name)
     
-    #tab.create(file_name)
+    tab.create(file_name)
     
     with open("../../working/ddl_fk.txt",'r') as fileh:
         

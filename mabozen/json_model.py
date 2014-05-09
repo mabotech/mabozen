@@ -162,10 +162,10 @@ class JsonModel(object):
                         pk =  {
                           "_pos": "0",
                           "column": "id",
-                          "comment":"new id",
+                          "comment":"composite",
                           "pk": True,
                           "required": True,
-                          "type": "int4"
+                          "type": "serial" #int4
                         }
                         tab["properties"].insert(0, pk)
                         column_names.add("id")
@@ -218,7 +218,7 @@ class JsonModel(object):
                       "comment":"new id(single)",
                       "pk": True,
                       "required": True,
-                      "type": "int4"
+                      "type": "serial"  #int4
                     }
                     tab["properties"].insert(0, pk)
                     column_names.add("id")
@@ -259,9 +259,10 @@ class JsonModel(object):
             pk =  {
               "_pos": "0",
               "column": "id",
+              "comment":"new id(empty)",
               "pk": True,
               "required": True,
-              "type": "int4"
+              "type": "serial"  #int4
             }
             tab["properties"].insert(0, pk)
             
@@ -346,5 +347,6 @@ if __name__ == "__main__":
     
     table_names =  ["company","division", "facility","department",  \
         "wip_line", "line","work_center","cost_center"] #["text_translation","work_shift"]
-        
+    
+    table_names = []
     json_m.run(table_names)

@@ -11,7 +11,7 @@ class ZenFactory(object):
         """
         factory initialize, 
         """
-        
+        #self.db_url = db_url
         self.components = parse_rfc1738_args(db_url)
 
         self.dbtype = self.components["name"]

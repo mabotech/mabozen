@@ -120,6 +120,8 @@ class Json2Ddl(object):
         foreign_tables = {}
 
         unique_tables = []
+        
+        add_not_null = 0
 
         for prop in model["properties"]:
         
@@ -133,7 +135,10 @@ class Json2Ddl(object):
                 pkval = False
             
             if pkval or prop["column"] =='id':
-                col = "%s %s" % (prop["column"], self._create_type(prop))
+                #if "comment" in prop:
+                comment = prop.get("comment")
+                col = "%s %s NOT NULL/* %s */" % (prop["column"], self._create_type(prop), comment)
+                add_not_null = 1
                 table["pk_column"] = prop["column"]
             #foreign key / serial / int4
             elif "fk" in prop:
@@ -177,7 +182,7 @@ class Json2Ddl(object):
                     foreign_tables[prop["toOne"]] = \
                             prop["column"].encode('utf8')
 
-            if "required" in prop:
+            if "required" in prop and add_not_null == 0:
                 col = col + " NOT NULL"
             else:
                 pass #col = col + ""
