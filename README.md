@@ -1,11 +1,23 @@
-mabozen
+Mabozen
 =======
 
-mabotech web app generator, model driven.
+Mabotech Web Application generator, **Model-Driven**.
 
 generate code from json model to pg ddl, pg function, javascript and html, etc.
 
 Domain-Driven in future.
+
+Features
+========
+
+- Extract db schema from PostgreSQL and save to JSON file.
+- Generate DDL from JSON model.
+- Generate HTML and JS (AngularJS Controllers).
+- Tools for PostgreSQL Scripts(SQL files) execution and PG functions backup.
+
+
+Example
+=======
 
 schema defination
 
@@ -38,8 +50,15 @@ output
     CONSTRAINT pk_company PRIMARY KEY (id)
     );
 
-roadmap
+Roadmap
 -------
-- generate json model from db schema.
-- js version?
-- support Oracle, SQL Server?
+- CLI
+- NodeJS version to generate code?
+- Support Oracle, SQL Server schema to json?
+
+
+License
+=======
+
+MIT
+
