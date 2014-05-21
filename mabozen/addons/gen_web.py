@@ -97,6 +97,7 @@ def gen_web(conf, table_name, attrs):
     
     jslib = "angular"
     
+    """
     template_type = "form" 
     conf["FILE_TYPE"] = "html"
     
@@ -116,7 +117,15 @@ def gen_web(conf, table_name, attrs):
     template_type = "form"
     conf["FILE_TYPE"]  = "js"
     gen_code(conf,  jslib, template_type, table_name, attrs)
-
+    
+    """
+    
+    #gen app
+    template_type = "form2"
+    conf["FILE_TYPE"]  = "coffee"
+    gen_code(conf,  jslib, template_type, table_name, attrs)
+    
+    """
     template_type = "list"
     conf["FILE_TYPE"]  = "js"
     gen_code(conf,  jslib, template_type, table_name, attrs)
@@ -125,4 +134,6 @@ def gen_web(conf, table_name, attrs):
     template_type = "app"
     conf["FILE_TYPE"]  = "js"
     gen_code(conf,  jslib, template_type, table_name, attrs)
+    """
+    
     
