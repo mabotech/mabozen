@@ -6,13 +6,15 @@
 ###
 angular.module("fbpoc.${class_name}FormCtrl", []).controller "${class_name}FormCtrl", [
   "$scope"
+  "$routeParams"
+  "$log"
   "$builder"
   "$validator"
+  "sessionService"
   "dataService"
-  "$log"
-  ($scope, $builder, $validator, dataService, $log) ->
+  ($scope, $routeParams, $log, $builder, $validator, sessionService, dataService) ->
   
-    table = "${table_name}"
+    $scope.table = "${table_name}"
     
     $scope.system = {
         modifiedon:null
@@ -62,6 +64,8 @@ else:
       ${default}
       
 %endfor
+
+    $scope.pkey = '${pkey}'
     
     # object list / initial position
     obj_list = [
@@ -111,12 +115,64 @@ else:
     #
     
     #$scope.defaultValue[1] = 3;
+    
+    #get options for select
+    get_kv = (field) ->
+    
+        dataService.getkv(params).then(
+            (data) ->
+                $log.debug(data)
+            ,
+            (result) ->
+                $log.debug("error", data)
+        
+        )
+    
+    # initial all select field
+    init_select = ->
+        
+        select_fields = []
+        
+        for field in select_fields
+            
+            get_kv(field)
+    
+    #set value for $scope.system
+    set_sysdata = (data) ->
+        
+        cols = ["modifiedon","modifiedby","createdon","createdby","rowversion"]
+        
+        for col in cols
+            $scope.system[col] = data[col]
+    
+    # get data for edit
+    $scope.get = ->
+    
+    
+        dataService.get(params).then(
+            (data) ->
+                $log.debug(data)
+                $scope.defaultValue[0] = "abc"
+            ,
+            (result) ->
+                $log.debug("error", result)        
+        
+        
+        )    
+    # refresh data from db
+    $scope.refresh = ->
+        
+        $scope.get()
+    
     #
-    #    submit, save, refresh...
+    # submit, save, refresh...
     #
-    $scope.submit = ->
+    $scope.save = ->
         #$validator.validate($scope, "zform").success(->
         #zmodel
+        
+        #$scope.zmodel[0].value = "abc"
+        #$scope.defaultValue[0] = "abc";
         
         fields = {}
         
@@ -124,6 +180,7 @@ else:
             # for update
             fields.rowversion = $scope.system.rowversion
         
+        #hardcode
         context = {
             languageid:1033
             user:'idea'
@@ -136,10 +193,9 @@ else:
                 fields[item.name] = item.value
         
         params = 
-            table:'${table_name}'
-            pkey:'${pkey}'
+            table: $scope.table
+            pkey: $scope.pkey
             columns:fields
-            #hardcode
             context: context
 
 
@@ -163,12 +219,8 @@ else:
         
         )
         
-
-        
         #).error ->
-        #show message
-
-    
+        #show message   
     #
     #    initialize controller
     #
