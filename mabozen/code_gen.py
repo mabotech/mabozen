@@ -99,6 +99,8 @@ class CodeGen(object):
             #logger.debug(model)
             table_name = model["_table"]
             
+            pkey = model["_pkey"]
+            
             tables.append(table_name)
             
             print (">>:%s" % (table_name) )
@@ -113,7 +115,8 @@ class CodeGen(object):
                 if "web" in self.conf["addons"]:
                     #generate html file [form]
                     print("- gen web")
-                    gen_web(self.conf, table_name, attrs)
+                    table_meta = {"table":table_name, "pkey":pkey, "attrs":attrs}
+                    gen_web(self.conf, table_meta)
                 
                 if "pytest" in self.conf["addons"]:
                     
@@ -142,5 +145,5 @@ if __name__ == "__main__":
     
     #filename = "../models/backup/models_20140425114210.json"
     #filename = "../models/organization.json"
-    filename = "../working/models/models_20140508103539.json"
+    filename = "../working/models/models_20140522122139.json"
     gen.run(filename)

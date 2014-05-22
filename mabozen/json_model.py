@@ -50,7 +50,7 @@ class JsonModel(object):
         tab["properties"] = []
         
         #original pk
-        tab["o_pk"] = []
+        tab["ori_pkey"] = []
         
         pos_set = set()
         
@@ -167,6 +167,7 @@ class JsonModel(object):
                           "required": True,
                           "type": "serial" #int4
                         }
+                        tab["_pkey"] = "id"
                         tab["properties"].insert(0, pk)
                         column_names.add("id")
                         
@@ -220,14 +221,15 @@ class JsonModel(object):
                       "required": True,
                       "type": "serial"  #int4
                     }
+                    tab["_pkey"] = "id"
                     tab["properties"].insert(0, pk)
                     column_names.add("id")
                     continue
                 else:
                 
                     attr["pk"] = True
-                    
-                    tab["o_pk"].append(col["column_name"] )
+                    tab["_pkey"] = col["column_name"]
+                    tab["ori_pkey"].append(col["column_name"] )
 
             column_names.add(attr["column"])
             if col["data_type"] in [ "varchar", "bpchar"]:
@@ -249,7 +251,7 @@ class JsonModel(object):
             
             tab["properties"].append(attr)           
         
-        pkcount = len(tab["o_pk"])
+        pkcount = len(tab["ori_pkey"])
         
         if has_pk == 0:
         
@@ -264,6 +266,7 @@ class JsonModel(object):
               "required": True,
               "type": "serial"  #int4
             }
+            tab["_pkey"] = "id"
             tab["properties"].insert(0, pk)
             
         return tab 
@@ -348,5 +351,5 @@ if __name__ == "__main__":
     table_names =  ["company","division", "facility","department",  \
         "wip_line", "line","work_center","cost_center"] #["text_translation","work_shift"]
     
-    table_names = []
+    #table_names = []
     json_m.run(table_names)

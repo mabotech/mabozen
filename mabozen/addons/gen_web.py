@@ -7,43 +7,26 @@ import os
 import hashlib
 import logging
 
-import json
+#import json
 
 from mako.template import Template
 from mako import exceptions
 
 from mabozen.lib.utils import get_class_name
-from mabozen.lib.utils import save_html, save_file
+#from mabozen.lib.utils import save_html, save_file
 
 logger = logging.getLogger("web")
 
-def gen_code(conf,  jslib, template_type, table_name, attrs):
+def save_code(out_path, content):
+    """real save"""
+    with open(out_path, 'w') as fileh:
+        content = content.replace('\r\n', '\n') #unix CRLF to windows LF
+        fileh.write( content ) 
+
+def save(out_path, file_type, content):
     """
-    as a function ?
-    from json to form? now from schema dict to form.
+    save code, archive if exist file has different content
     """
-    file_type = conf["FILE_TYPE"] 
-    
-    class_name = get_class_name(table_name) 
-    
-    tpl_path = os.sep.join([conf["TPL_ROOT"], "web",  jslib, "%s_mako.%s" % (template_type, file_type) ])
-    
-    out_path = os.sep.join([conf["OUT_ROOT"], "web", table_name,  "%s.%s" % (template_type, file_type) ])
-
-    print(tpl_path)
-    print(out_path)
-    try:
-    
-        template = Template(filename=tpl_path,   disable_unicode=True, input_encoding='utf-8')
-
-        content = template.render(class_name=class_name, table_name = table_name, attrs = attrs)
-        
-    except Exception as ex:
-        
-        print (exceptions.text_error_template().render()  )
-        
-        raise Exception("render error")
-
     #save_html(out_path, content)
     dirname =  os.path.dirname(out_path) 
     
@@ -69,71 +52,120 @@ def gen_code(conf,  jslib, template_type, table_name, attrs):
             old_content = fileh.read()
             md5.update(old_content)
 
-            old_hexdigest = md5.hexdigest()
-            
+            old_hexdigest = md5.hexdigest()   
     
     
         if hexdigest != old_hexdigest:
-            old_file = ".".join([out_path.replace("."+file_type, ""), old_hexdigest, file_type])
+            old_file = ".".join([out_path.replace("."+file_type, ""), \
+                old_hexdigest, file_type])
             print(old_file)
             print(out_path)
             os.rename(out_path, old_file)
+            save_code(out_path, content)
+        else:
+            print("generated")
             
+    else:
+        save_code(out_path, content)
     
-    with open(out_path, 'w') as fileh:
-        content = content.replace('\r\n', '\n') #unix CRLF to windows LF
-        fileh.write( content )
+    
+def gen_code(conf,  tpl_group, tpl_name, table_meta):
+    """
+    as a function ?
+    from json to form? now from schema dict to form.
+    """
+    
+    table_name = table_meta["table"]
+    pkey = table_meta["pkey"]
+    attrs = table_meta["attrs"]
+    
+    file_type = conf["FILE_TYPE"] 
+    
+    class_name = get_class_name(table_name) 
+    
+    tpl_path = os.sep.join([conf["TPL_ROOT"], "web",  tpl_group, \
+        "%s_mako.%s" % (tpl_name, file_type) ])
+    
+    out_path = os.sep.join([conf["OUT_ROOT"], "web", table_name, \
+        "%s.%s" % (tpl_name, file_type) ])
+
+    #print(tpl_path)
+    #print(out_path)
+    try:
+    
+        template = Template(filename=tpl_path, disable_unicode=True, \
+            input_encoding='utf-8')
+
+        content = template.render(class_name=class_name, \
+            table_name = table_name, pkey=pkey, attrs = attrs)
+        
+    except Exception as ex:
+        
+        print (exceptions.text_error_template().render()  )
+        print(ex.message)
+        raise Exception("render error")
+
+    save(out_path, file_type, content)
     
 
-def gen_web(conf, table_name, attrs):
+def gen_web(conf, table_meta):
     """
     generate html    
     """
     
     #gen form
     
-    print(table_name)
-    print(json.dumps(attrs, sort_keys=True, indent=2, separators=(',', ': '))  )
+    #print(table_name)
+    #print(json.dumps(attrs, sort_keys=True, indent=2, separators=(',', ': ')))
     
-    jslib = "angular"
+    tpl_group = "angular"
     
     """
-    template_type = "form" 
+    tpl_name = "form" 
     conf["FILE_TYPE"] = "html"
     
-    gen_code(conf, jslib, template_type, table_name, attrs)
+    gen_code(conf, tpl_group, tpl_name, table_name, attrs)
 
-    template_type = "list" 
+    tpl_name = "list" 
     conf["FILE_TYPE"] = "html"
     
-    gen_code(conf,  jslib, template_type, table_name, attrs)
+    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
 
     #gen index
-    template_type = "index"
+    tpl_name = "index"
     conf["FILE_TYPE"]  = "html"
-    gen_code(conf,  jslib, template_type, table_name, attrs)
+    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
     
     #gen app
-    template_type = "form"
+    tpl_name = "form"
     conf["FILE_TYPE"]  = "js"
-    gen_code(conf,  jslib, template_type, table_name, attrs)
+    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
     
     """
     
     #gen app
-    template_type = "form2"
-    conf["FILE_TYPE"]  = "coffee"
-    gen_code(conf,  jslib, template_type, table_name, attrs)
+    #tpl_name = "form2"
+    #conf["FILE_TYPE"]  = "coffee"
+    
+    templates = [
+                    ("coffee", "form2"),                    
+                ]
+    
+    for item in templates:        
+        #print(item) 
+        conf["FILE_TYPE"]  = item[0]
+        tpl_name = item[1]
+        gen_code(conf, tpl_group, tpl_name, table_meta)
     
     """
-    template_type = "list"
+    tpl_name = "list"
     conf["FILE_TYPE"]  = "js"
-    gen_code(conf,  jslib, template_type, table_name, attrs)
+    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
     
     #gen controller
-    template_type = "app"
+    tpl_name = "app"
     conf["FILE_TYPE"]  = "js"
-    gen_code(conf,  jslib, template_type, table_name, attrs)
+    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
     """
     
     
