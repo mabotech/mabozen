@@ -7,6 +7,8 @@ import os
 import hashlib
 import logging
 
+import re
+
 #import json
 
 from mako.template import Template
@@ -16,6 +18,18 @@ from mabozen.lib.utils import get_class_name
 #from mabozen.lib.utils import save_html, save_file
 
 logger = logging.getLogger("web")
+
+def coffee_preprocessor(source):
+    """
+    keep coffee comment in mako template.
+    """
+    
+    # redefine mako inline mark.
+    #source = re.sub(r"\${(.+?)}", r"${'${'}\1${'}'}", source)
+    #source = re.sub(r"\@\[(.+?)\]", r"${\1}", source)
+    
+    source = re.sub(r"##", r"${'##'}", source)
+    return source
 
 def save_code(out_path, content):
     """real save"""
@@ -92,9 +106,9 @@ def gen_code(conf,  tpl_group, tpl_name, table_meta):
     #print(tpl_path)
     #print(out_path)
     try:
-    
+        # mako template
         template = Template(filename=tpl_path, disable_unicode=True, \
-            input_encoding='utf-8')
+            input_encoding='utf-8', preprocessor = coffee_preprocessor)
 
         content = template.render(class_name=class_name, \
             table_name = table_name, pkey=pkey, attrs = attrs)

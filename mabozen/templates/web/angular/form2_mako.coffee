@@ -10,11 +10,12 @@ angular.module("fbpoc.${class_name}FormCtrl", []).controller "${class_name}FormC
   "$log"
   "$builder"
   "$validator"
-  "sessionService"
+  "contextService"
   "dataService"
-  ($scope, $routeParams, $log, $builder, $validator, sessionService, dataService) ->
+  ($scope, $routeParams, $log, $builder, $validator, contextService, dataService) ->
   
     $scope.table = "${table_name}"
+    $scope.pkey = '${pkey}'
     
     $scope.system = {
         modifiedon:null
@@ -29,9 +30,6 @@ angular.module("fbpoc.${class_name}FormCtrl", []).controller "${class_name}FormC
 %for attr in attrs:
 <%
 #foreign table
-
-if 'pk' in attr:
-    pkey = attr['column']
 
 if 'ref' in attr:
     type = 'select4'
@@ -65,7 +63,7 @@ else:
       
 %endfor
 
-    $scope.pkey = '${pkey}'
+    
     
     # object list / initial position
     obj_list = [
@@ -84,6 +82,9 @@ else:
     #        init
     #
     init = ->
+    
+      context = contextService.get()
+    
       j = 0
       $scope.zmodel = []
       $scope.defaultValue = {}
@@ -181,11 +182,13 @@ else:
             fields.rowversion = $scope.system.rowversion
         
         #hardcode
-        context = {
+        context = contextService.get()
+        ###
+        {
             languageid:1033
             user:'idea'
         }
-        
+        ###
         for item in $scope.zmodel
             if item.value.length == 0
                 fields[item.name] = null
