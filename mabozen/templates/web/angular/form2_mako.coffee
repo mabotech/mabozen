@@ -12,10 +12,14 @@ angular.module("fbpoc.${class_name}FormCtrl", []).controller "${class_name}FormC
   "$validator"
   "contextService"
   "dataService"
-  ($scope, $routeParams, $log, $builder, $validator, contextService, dataService) ->
+  "translationService"
+  "helpers"
+  ($scope, $routeParams, $log, $builder, $validator, contextService, dataService, translationService, helpers) ->
   
     $scope.table = "${table_name}"
     $scope.pkey = '${pkey}'
+    
+    _t = translationService.translate
     
     $scope.system = {
         modifiedon:null
@@ -26,13 +30,16 @@ angular.module("fbpoc.${class_name}FormCtrl", []).controller "${class_name}FormC
     
     }
     name_pos = {}
-    
+<%
+refs = []
+%>
 %for attr in attrs:
 <%
 #foreign table
 
 if 'ref' in attr:
     type = 'select4'
+    refs.append(attr)
 else:
     type = 'sampleInput'
 
@@ -53,31 +60,29 @@ else:
     o_${attr["column"]} =
       name: "${attr["column"]}"
       component: "${type}"
-      label: "${attr["column"]}"
+      label: _t("${attr["column"]}")
       description: ""
-      placeholder: "${attr["column"]}"
+      placeholder: _t("${attr["column"]}_ph")
       required: ${required}
       editable: false
       #readonly:false,
       ${default}
       
-%endfor
-
-    
+%endfor    
     
     # object list / initial position
     obj_list = [
 %for attr in attrs:      
       o_${attr["column"]}
 %endfor
-    ]
+    ]    
     
-    #
-    #    init all select
-    #
-    init_select = ->
+    init_edit = ->
+        id = $routeParams
+        
+        if id
+            $scope.get()
 
-    
     #
     #        init
     #
@@ -102,6 +107,9 @@ else:
       
       #init init_select
       init_select()
+      
+      init_edit()
+      
       return
 
     
@@ -117,6 +125,7 @@ else:
     
     #$scope.defaultValue[1] = 3;
     
+    ###
     #get options for select
     get_kv = (field) ->
     
@@ -137,15 +146,30 @@ else:
         for field in select_fields
             
             get_kv(field)
+    ###        
+            
+    get_kv = (table, column) ->
+        return [table, column]
+    
+    #
+    #    init all select
+    #
+    init_select = ->
+%for ref in refs:
+        get_kv("${ref["ref"]["table"]}", "${ref["ref"]["column"]}")
+    
+%endfor
+        return            
     
     #set value for $scope.system
+    ###
     set_sysdata = (data) ->
         
         cols = ["modifiedon","modifiedby","createdon","createdby","rowversion"]
         
         for col in cols
             $scope.system[col] = data[col]
-    
+    ###
     # get data for edit
     $scope.get = ->
     
@@ -159,7 +183,10 @@ else:
                 $log.debug("error", result)        
         
         
-        )    
+        )
+        
+        return
+        
     # refresh data from db
     $scope.refresh = ->
         
@@ -221,6 +248,8 @@ else:
                 $log.debug("error", reason)
         
         )
+        
+        return
         
         #).error ->
         #show message   

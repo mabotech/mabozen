@@ -2,24 +2,21 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('myApp', [
+angular.module('maboss', [
   'ngRoute',
-  'ui.bootstrap', // 'ui.select2'
+  'ui.bootstrap', 
   'ui.validate',
-  'ui.select2',
-  'myApp.filters',
-  'myApp.services',
-  'myApp.directives',
+ // 'ui.select2',
+ // 'maboss.filters',
+ // 'maboss.services',
+ // 'maboss.directives',
  // 'myApp.controllers'
 ]).
 config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/company.form', {templateUrl: 'app/company/form.html', controller: 'CompanyFormCtrl'});
-  $routeProvider.when('/company.form/:id', {templateUrl: 'app/company/form.html', controller: 'CompanyFormCtrl'});
-  $routeProvider.when('/company.list', {templateUrl: 'app/company/list.html', controller: 'CompanyListCtrl'});
-  
-  $routeProvider.when('/facility.form', {templateUrl: 'app/facility/form.html', controller: 'FacilityFormCtrl'});
-  $routeProvider.when('/facility.form/:id', {templateUrl: 'app/facility/form.html', controller: 'FacilityFormCtrl'});
-  $routeProvider.when('/facility.list', {templateUrl: 'app/facility/list.html', controller: 'FacilityListCtrl'});
-  
-  $routeProvider.otherwise({redirectTo: '/company.list'});
+    
+  $routeProvider.when('/${table_name}.form', {templateUrl: 'app/${table_name}/form.html', controller: '${class_name}FormCtrl'});
+  $routeProvider.when('/${table_name}.form/:id', {templateUrl: 'app/${table_name}/form.html', controller: '${class_name}FormCtrl'});
+  $routeProvider.when('/${table_name}.table', {templateUrl: 'app/${table_name}/table.html', controller: '${class_name}TableCtrl'});
+
+  $routeProvider.otherwise({redirectTo: '/${table_name}.table'});
 }]);

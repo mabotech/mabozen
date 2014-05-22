@@ -2,69 +2,78 @@
 
 # uglifyjs table.js -b  --comments all 
 ###
-FacilityListCtrl
-view of engity list
+${class_name}TableCtrl
+table view of entity
 save pagination and filter params in session?
 ###
 
 #function FacilityListCtrl($scope, $routeParams, $http,  sessionService, entity, common) {
-module = angular.module("maboss.FacilityTableCtrl", [])
-module.controller "FacilityTableCtrl", [
+module = angular.module("maboss.${class_name}TableCtrl", [])
+
+module.controller "${class_name}TableCtrl", [
     "$scope"
     "$routeParams"
-    "$http"
-    "sessionService"
-    "dataService"
     "$log"
-    ($scope, $routeParams, $http, sessionService, dataService, $log) ->
+    "contextService"
+    "dataService"
+    "translationService"
+    "helpers"
+    ($scope, $routeParams, $log, contextService, dataService, translationService, helpers) ->
         
         #table name
-        $scope.table = "facility"
+        $scope.table = "${table_name}"
         
         #primary key
-        $scope.pkey = "facility"
+        $scope.pkey = "${pkey}"
         
         #configuration for datatables 
         
         #var texts_languageid = {msgid:text}; 
-        _t = (msgid) ->
-            "更新时间"
-
+        _t = translationService.translate
+        
+        
+        init ->
+            $log.debug("init")
+        
+        ###
+        init table columns
+        ###
+        
         $scope.columns = [
+%for attr in attrs:        
             {
-                data: "facility"
-                title: "Facility Code"
+                data: "${attr["column"]}"
+                title: _t("${attr["column"]}")
+                orderable: true
+                show: true
+    %if pkey == attr["column"]:
                 render: (data, type, row) ->
                     "<a href=\"#/facility.form/" + data + "\">" + data + "</a>"
+    %endif
+    
             }
-            {
-                data: "texths"
-                title: "Facility"
-            }
-            {
-                data: "company"
-                orderable: false
-                title: "公司"
-                name: "company"
-            }
+%endfor            
             {
                 data: "modifiedon"
                 title: _t("modifiedon")
+                show: false
             }
             {
                 data: "createdon"
-                title: "Created On"
+                title: _t("createdon")
+                show: false
             }
             {
                 data: "createdby"
-                title: "Created By"
+                title: _t("createdby")
                 orderable: false
+                show: false
             }
         ]
         
-        #
-        #     call service
-        #    
+        ###
+        # call service
+        ###    
         fetch = (data, callback) ->
             cols = []
             i = undefined
@@ -114,9 +123,9 @@ module.controller "FacilityTableCtrl", [
             return
 
         
-        #
+        ###
         #    table config
-        #    
+        ###   
         $("#main_table").dataTable
             
             #"processing": true,
@@ -142,5 +151,22 @@ module.controller "FacilityTableCtrl", [
             columnDefs:
                 render: (data, type, row) ->
                     data + " (" + row[3] + ")"
-
+        
+        ###
+        delete
+        ###
+        $scope.delete = ->
+            params = {
+                table:$scope.table
+                ids:[]
+                }
+                
+            if params.ids.length > 0
+                dataService.delete(params)
+        
+        
+        ###
+        init
+        ###
+        init()
 ]

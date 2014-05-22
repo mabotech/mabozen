@@ -124,7 +124,7 @@ def gen_code(conf,  tpl_group, tpl_name, table_meta):
 
 def gen_web(conf, table_meta):
     """
-    generate html    
+    generate web app    
     """
     
     #gen form
@@ -132,37 +132,18 @@ def gen_web(conf, table_meta):
     #print(table_name)
     #print(json.dumps(attrs, sort_keys=True, indent=2, separators=(',', ': ')))
     
-    tpl_group = "angular"
-    
-    """
-    tpl_name = "form" 
-    conf["FILE_TYPE"] = "html"
-    
-    gen_code(conf, tpl_group, tpl_name, table_name, attrs)
+    tpl_group = "angular"    
 
-    tpl_name = "list" 
-    conf["FILE_TYPE"] = "html"
-    
-    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
-
-    #gen index
-    tpl_name = "index"
-    conf["FILE_TYPE"]  = "html"
-    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
-    
-    #gen app
-    tpl_name = "form"
-    conf["FILE_TYPE"]  = "js"
-    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
-    
-    """
-    
-    #gen app
-    #tpl_name = "form2"
-    #conf["FILE_TYPE"]  = "coffee"
     
     templates = [
-                    ("coffee", "form2"),                    
+                    #("html","index"),
+                    ("coffee", "form2"),  
+                    ("coffee","table"),
+                    ("coffee","app"),
+                    #("html","list"),
+                    #("js","list"),
+                    #("html","form"),
+                    #("js","form")
                 ]
     
     for item in templates:        
@@ -171,15 +152,6 @@ def gen_web(conf, table_meta):
         tpl_name = item[1]
         gen_code(conf, tpl_group, tpl_name, table_meta)
     
-    """
-    tpl_name = "list"
-    conf["FILE_TYPE"]  = "js"
-    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
-    
-    #gen controller
-    tpl_name = "app"
-    conf["FILE_TYPE"]  = "js"
-    gen_code(conf,  tpl_group, tpl_name, table_name, attrs)
-    """
+
     
     
