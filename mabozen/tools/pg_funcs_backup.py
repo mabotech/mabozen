@@ -107,16 +107,19 @@ $BODY$%(body)s$BODY$
             
             if old_digest != digest:
         
-                filename = "%s@%s.sql" % (func_dict["name"], digest)   
+                filename = "%s@%s.arch" % (func_dict["name"], old_digest)   
                 
                 full_filename_digest = os.sep.join([self.function_root, filename])
                 
                 #check if already backuped
                 if  os.path.exists(full_filename_digest):
-                    print(">.backuped")
+                    print(">.archived")
                 else:
                     print(full_filename_digest)
-                    self._save(full_filename_digest, func_dict)                
+                    #archive
+                    os.rename(full_filename, full_filename_digest)
+                    
+                self._save(full_filename, func_dict)                
             else:
                 #print("same file")
                 pass
