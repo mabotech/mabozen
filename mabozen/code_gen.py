@@ -109,9 +109,6 @@ class CodeGen(object):
             
             try:
                 
-                    
-                    
-                    
                 if "web" in self.conf["addons"]:
                     #generate html file [form]
                     print("- gen web")
