@@ -13,23 +13,40 @@ app = angular.module("maboss", [
     "ngRoute"
     "ui.bootstrap"
     "ui.validate"
+    
+    #form builder
+    "builder"
+    "builder.components"
+    "validator.rules"
+    
+    #mabo services
+    "service.jsonrpc"
+    "service.contextService"
+    "service.dataService"
+    "service.translationService"
+    "service.helpers"
+    
+    #controllers    
+    "maboss.${class_name}FormCtrl"
+    "maboss.${class_name}TableCtrl"
+  
 ]).config [
     "$routeProvider"
     ($routeProvider) ->
         $routeProvider.when "/${table_name}.form",
-            templateUrl: "app/${table_name}/form.html"
+            templateUrl: "/common/views/form.html"
             controller: "${class_name}FormCtrl"
 
         $routeProvider.when "/${table_name}.form/:id",
-            templateUrl: "app/${table_name}/form.html"
+            templateUrl: "/common/views/form.html"
             controller: "${class_name}FormCtrl"
 
         $routeProvider.when "/${table_name}.table",
-            templateUrl: "app/${table_name}/table.html"
+            templateUrl: "/common/views/table.html"
             controller: "${class_name}TableCtrl"
 
         $routeProvider.otherwise redirectTo: "/${table_name}.table"
 ]
 
 
-centralConfig.config(app)
+centralConfig(app)
