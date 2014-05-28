@@ -32,7 +32,7 @@ module.controller "${class_name}TableCtrl", [
         _t = translationService.translate
         
         
-        init ->
+        init = ()->
             $log.debug("init")
         
         ###
@@ -45,7 +45,7 @@ module.controller "${class_name}TableCtrl", [
                 data: "${attr["column"]}"
                 title: _t("${attr["column"]}")
                 orderable: true
-                show: true
+                visible: true
     %if pkey == attr["column"]:
                 render: (data, type, row) ->
                     "<a href=\"#/facility.form/" + data + "\">" + data + "</a>"
@@ -56,18 +56,18 @@ module.controller "${class_name}TableCtrl", [
             {
                 data: "modifiedon"
                 title: _t("modifiedon")
-                show: false
+                visible: false
             }
             {
                 data: "createdon"
                 title: _t("createdon")
-                show: false
+                visible: false
             }
             {
                 data: "createdby"
                 title: _t("createdby")
                 orderable: false
-                show: false
+                visible: false
             }
         ]
         
