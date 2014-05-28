@@ -4,7 +4,7 @@
 ###
 # ${class_name} form
 ###
-angular.module("fbpoc.${class_name}FormCtrl", []).controller "${class_name}FormCtrl", [
+angular.module("maboss.${class_name}FormCtrl", []).controller "${class_name}FormCtrl", [
   "$scope"
   "$routeParams"
   "$log"
@@ -78,7 +78,7 @@ else:
     ]    
     
     init_edit = ->
-        id = $routeParams
+        id = $routeParams.id
         
         if id
             $scope.get()
@@ -172,7 +172,8 @@ else:
     ###
     # get data for edit
     $scope.get = ->
-    
+        
+        params = {}
     
         dataService.get(params).then(
             (data) ->
