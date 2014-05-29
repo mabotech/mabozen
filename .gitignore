@@ -12,6 +12,7 @@ __pycache__/
 mabozen.ini
 mabozen.json
 mabozen_config.py
+relation_group.json
 
 #backup
 backup/

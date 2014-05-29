@@ -101,8 +101,7 @@ class RelationMap(object):
                             "maboss%s_%s.svg" %(self.etype, stamp)]) 
         cmd = r'''C:\Tools\Graphviz2.30\bin\dot -Tsvg -o %s %s''' \
                     % (out_file, dot_file   )
-        print cmd
-        #print cmd        
+        #print (cmd)
         subprocess.Popen(cmd, shell=True)      
     
     def _make_edge(self, rel):
@@ -178,7 +177,7 @@ class RelationMap(object):
                 self.edge_list.add(edge_s)
                 self.edges.append(edge)   
 
-            print(rel["ctable"])
+            #print(rel["ctable"])
             self.one(rel["ctable"], level+1)
     
     def prepare_all(self):
@@ -196,27 +195,19 @@ class RelationMap(object):
         tabs = self.dbi.fetchall()
         
         for tab in tabs:
-            print(tab[0])           
-            
+            #print(tab[0])           
             self.one(tab[0], 1)        
     
     def prepare_root(self, table_name, max_level):
         """ fetch children """
         self.max_level = max_level
         self.one(table_name, 1)
+
         
-def main():
+def process(table_list):
     """ main """
-    table_list = ["company", "facility", "division", "department",
-                "wip_line", "cost_center", "work_center", "warehouse",
-                "warehouse_location", "zone"]
     
-    #table_list = ["product","component","product_component", \
-    #   "genealogy","lot_no","serial_no"]
-    
-    #table_list = [] #["wip_order"]
-    
-    rmap = RelationMap(table_list, 'c', 3)
+    rmap = RelationMap(table_list, 'p', 3)
     
     table_name =  None#"wip_order"
     
@@ -227,6 +218,16 @@ def main():
     rmap.prepare_root(table_name, max_level)
     
     rmap.dot()
+    
+def main():
+    """ main """
+    with open("relation_group.json",'r') as fileh:
+        groups = json.loads(fileh.read())
+        
+    for table_group in groups:
+        print table_group["tables"]
+        
+        process(table_group["tables"])
     
 if __name__ == '__main__':
     main()
