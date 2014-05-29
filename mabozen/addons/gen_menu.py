@@ -16,9 +16,9 @@ def gen_menu(conf, tables):
     file_type = conf["file_type"] 
     template_type =conf["template_type"]
     
-    tpl_path = os.sep.join([conf["tpl_root"], "web", "%s_mako.%s" % (template_type, file_type) ])
+    tpl_path = os.sep.join([conf["TPL_ROOT"], "web", "%s_mako.%s" % (template_type, file_type) ])
     
-    out_path = os.sep.join([conf["out_root"], "web",  "%s.%s" % (template_type, file_type) ])
+    out_path = os.sep.join([conf["OUT_ROOT"], "web",  "%s.%s" % (template_type, file_type) ])
 
     print(tpl_path)
     print(out_path)

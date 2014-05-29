@@ -1,208 +1,104 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="myApp">
-<head>
-  <meta charset="utf-8">
-  <title>maboss App</title>
-  <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.min.css">
-  <link href="/libs/fa/css/font-awesome.min.css" rel="stylesheet">
-  <link href="/libs/select2-3.4.6/select2.css" rel="stylesheet">
-  <!-- -->
-  <link rel="stylesheet" href="css/app.css"/>
-</head>
-<body>
-
-<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-
- <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="#">MABOSS</a>
-    </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">生产管理 <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">产量</a></li>            
-            <li><a href="#">在制品</a></li>
-            <li><a href="#">质量</a></li>
-            <li class="divider"></li>
-            <li><a href="#">接口数据</a></li>
-            <li class="divider"></li>
-            <li><a href="#">报表设置</a></li>
-          </ul>
-        </li>
-        
-                <li class="active dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">数据维护 <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">产量</a></li>            
-            <li><a href="#">在制品</a></li>
-            <li><a href="#">质量</a></li>
-            <li class="divider"></li>
-            <li><a href="#">接口数据</a></li>
-            <li class="divider"></li>
-            <li><a href="#">报表设置</a></li>
-          </ul>
-        </li>
-        
-                <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">系统监控 <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">产量</a></li>            
-            <li><a href="#">在制品</a></li>
-            <li><a href="#">质量</a></li>
-            <li class="divider"></li>
-            <li><a href="#">接口数据</a></li>
-            <li class="divider"></li>
-            <li><a href="#">报表设置</a></li>
-          </ul>
-        </li>
-        
-        
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">报表 <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">产量</a></li>            
-            <li><a href="#">在制品</a></li>
-            <li><a href="#">质量</a></li>
-            <li class="divider"></li>
-            <li><a href="#">接口数据</a></li>
-            <li class="divider"></li>
-            <li><a href="#">报表设置</a></li>
-          </ul>
-        </li>
-      </ul>
-
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Administrator</a></li>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">设置 <b class="caret"></b></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">语言</a></li>
-            <li><a href="#">账户</a></li>
-            <li><a href="#">门户</a></li>
-            <li class="divider"></li>
-            <li><a href="#">退出</a></li>
-          </ul>
-        </li>
-      </ul>
-      
-    <form class="navbar-form navbar-right" role="search">
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="切换菜单">
-        </div>
-        <button type="submit" class="btn btn-default">Go</button>
-      </form>
-      
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
-
-<div class="container-fluid">
-  <div class="row-fluid">
-  <div class="col-lg-2">
-  
- <br/>
-   <br/>
-  <br/>
-  <br/>
- 
-
-
-  
-  <ul class="nav nav-pills nav-stacked">
-    <li id="ln01">
-    <span class="fa fa-group fa-2x"></span>
-    <span class="mt-menu-item">Organization</span>
-  </li>
-  <li class="active"><a href="#/company.list">Company</a></li>
-  <li><a href="#">Division</a></li>
-  <li><a href="#/facility.list">Facility</a></li>
-  <li><a href="#">Department</a></li>
-  <li><a href="#">Production Line</a></li>
-   <li><a href="#">Production Zone</a></li>
-    <li><a href="#">Work Center</a></li>
-     <li><a href="#">Workstation</a></li>
-</ul>
-
-  
-  
-  </div>
-  <div class="col-lg-10">
-  
-  
-<div class="container">
-<div class="row">
-
-  <ul class="menu">
-    <li><a href="#/view1">view1</a></li>
-    <li><a href="#/view2">view2</a></li>
-  </ul>
-
-</div>
-    <div class="row">
-        <div class="col-xs-12 col-md-8">
-        
+<!-- -->
+<html lang="en" ng-app="maboss">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MABOSS</title>
+    <link rel="stylesheet" href="/libs/bootstrap/css/bootstrap.min.css" />
+    <link href="/libs/fa/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="/libs/select2-3.4.6/select2.css" rel="stylesheet" />
     
+    <link href="/libs/datatables/css/jquery.dataTables.css" rel="stylesheet" />
+    <!-- components -->
+    <link href="/components/vis/dist/vis.css" rel="stylesheet" type="text/css" />
+    <!-- messenger -->
+    <link href="/libs/messenger/css/messenger.css" rel="stylesheet" />
+    <link href="/libs/messenger/css/messenger-theme-air.css" rel="stylesheet" />
+    <link href="/libs/messenger/css/messenger-theme-future.css" rel="stylesheet" />
+    <!-- app  -->
+    <link rel="stylesheet" href="/css/maboss.css" />    
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
 
-        
-            <div ng-view></div>
-        </div>
-    </div>
+    <header class="navbar navbar-inverse" role="navigation">
+    
+      <div class="container-fluid expanded-panel">
         <div class="row">
-        <div class="col-xs-12 col-md-8">
-            <div style="float:right;">MABOSS 1.0.0, Powered by <a href="http://www.mabotech.com">MaboTech</a></div>
+          <div id="logo" class="col-xs-12 col-sm-2">
+            <a href="index.html">MABOSS</a>
+          </div>
+          <div id="top-panel" class="col-xs-12 col-sm-10">
+            <div class="row"></div>
+          </div>
         </div>
-    </div>
-</div>
-        </div>
-    </div>
-</div>
+      </div>
+    </header>
+    
+    <div id="main" class="container-fluid">
+      
+      <div class="row">
+        <!-- Start Sidebar --> 
+        <!-- End Sidebar -->
+        <!--Start Content-->
+        <div id="content" class="col-xs-12 col-sm-10">
 
-<!--nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation" style="height:20px;" >
-<ul>
-<li class="active">
-2014-03-22 16:20:36 DEBUG: update company
-</li>
-</ul>
-</nav-->
-  <!-- In production use:
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
-  -->
-  <script src="/libs/jquery-2.1.0.min.js"></script>
-  <script src="/libs/bootstrap/js/bootstrap.min.js"></script>  
-  <!-- angular -->
-  <script src="/libs/angular.min.js"></script>
-  <script src="/libs/ui-bootstrap-tpls-0.10.0.min.js"></script>
-  <script src="/libs/angular/angular-route.js"></script>
-  
-  <script src="/libs/select2-3.4.6/select2.min.js"></script>
-  <script src="/libs/angular-ui/select2.js"></script>
-  <script src="/libs/angular-ui/ui-utils/validate.js"></script>
-  
-  <!-- common -->
-  <script src="/mabolib/utils.js"></script>
-  
-  <!-- app -->
-  <script src="app/app.js"></script>
-  <script src="js/services.js"></script>
-  
-  <script src="app/company/list.js"></script>
-  <script src="app/company/form.js"></script>
-  
-  <script src="app/facility/list.js"></script>
-  <script src="app/facility/form.js"></script>
-  
-  <script src="js/filters.js"></script>
-  <script src="js/directives.js"></script>
-</body>
+          <div ng-view=""></div>
+        </div>
+        <!--End Content-->
+      </div>
+     
+      
+    </div>
+    <!-- scripts -->
+    <script src="/libs/jquery-2.1.0.min.js"></script>
+    <script src="/libs/bootstrap/js/bootstrap.min.js"></script>
+    
+    <!-- vis -->
+    <script src="/components/vis/dist/vis.min.js"></script>
+    
+    <!-- messenger -->
+    <script src="/libs/messenger/js/messenger.min.js"></script>
+    <script src="/libs/messenger/js/messenger-theme-flat.js"></script>
+    <script src="/libs/messenger/js/messenger-theme-future.js"></script>
+    <!-- datatables -->     
+    <script src="/libs/datatables/js/jquery.dataTables.js"></script>
+    <script src="/libs/datatables/js/TableTools.js"></script>
+    <script src="/libs/datatables/js/dataTables.bootstrap.js"></script>    
+    <!-- angular -->
+    <script src="/libs/angular/angular.js"></script>
+    <script src="/libs/ui-bootstrap-tpls-0.10.0.min.js"></script>
+    <script src="/libs/angular/angular-route.js"></script>
+    <script src="/libs/select2-3.4.6/select2.min.js"></script>
+    <script src="/libs/angular-ui/select2.js"></script>
+    <script src="/libs/angular-ui/ui-utils/validate.js"></script>
+    <!-- common -->
+    <script src="/mabolib/utils.js"></script>
+    
+    <!-- form builder -->
+    <script type="text/javascript" src="/libs/angular-form-builder/dist/angular-form-builder.js"></script>
+    <script type="text/javascript" src="/libs/angular-form-builder/dist/angular-form-builder-components.js"></script>
+    <script type="text/javascript" src="/libs/angular-validator/dist/angular-validator.js"></script>
+    <script type="text/javascript" src="/libs/angular-validator/dist/angular-validator-rules.js"></script>
+    
+    <!-- services -->
+    <script src="/mabolib/services.js"></script>
+    <script src="/mabolib/services/jsonrpc.js"></script>
+    <script src="/mabolib/services/dataService.js"></script>
+    <script src="/mabolib/services/contextService.js"></script>
+    <script src="/mabolib/services/translationService.js"></script>
+    <script src="/mabolib/services/helpers.js"></script>
+    <script src="/mabolib/services/centralConfig.js"></script>
+ 
+    <!-- filters -->
+    
+    <!-- directives -->
+
+    <!-- app -->
+    <script src="app/app.js"></script>
+    <!-- controllers -->
+    <script src="app/form2.js"></script>
+    <script src="app/table.js"></script>
+  </body>
 </html>

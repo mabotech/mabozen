@@ -351,5 +351,5 @@ if __name__ == "__main__":
     table_names =  ["company","division", "facility","department",  \
         "wip_line", "line","work_center","cost_center"] #["text_translation","work_shift"]
     
-    #table_names = []
+    table_names = []
     json_m.run(table_names)

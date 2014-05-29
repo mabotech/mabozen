@@ -136,11 +136,11 @@ class CodeGen(object):
         
 if __name__ == "__main__":
     
-    addons = ["web"]# ["menu","web", "pytest"]
+    addons = ["web","menu"]# [,"web", "pytest"]
     
     gen = CodeGen(addons)
     
     #filename = "../models/backup/models_20140425114210.json"
     #filename = "../models/organization.json"
-    filename = "../working/models/models_20140522122139.json"
+    filename = "../working/models/models_20140529132918.json"
     gen.run(filename)

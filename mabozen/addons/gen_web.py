@@ -7,6 +7,9 @@ import os
 import hashlib
 import logging
 
+#run coffee -c
+import subprocess
+
 import re
 
 #import json
@@ -36,7 +39,14 @@ def save_code(out_path, content):
     with open(out_path, 'w') as fileh:
         content = content.replace('\r\n', '\n') #unix CRLF to windows LF
         fileh.write( content ) 
-
+    
+    if out_path.count(".coffee") >0 :
+        cmd = "coffee -c %s" %(out_path)
+        print(cmd)
+        subprocess.Popen(cmd, shell=True) 
+    else:
+        print(out_path)
+        
 def save(out_path, file_type, content):
     """
     save code, archive if exist file has different content
@@ -71,10 +81,11 @@ def save(out_path, file_type, content):
     
         if hexdigest != old_hexdigest:
             old_file = ".".join([out_path.replace("."+file_type, ""), \
-                old_hexdigest, file_type])
+                old_hexdigest, file_type,"arch"])
             print(old_file)
             print(out_path)
-            os.rename(out_path, old_file)
+            if not os.path.exists(old_file):
+                os.rename(out_path, old_file)
             save_code(out_path, content)
         else:
             print("generated")
@@ -99,9 +110,15 @@ def gen_code(conf,  tpl_group, tpl_name, table_meta):
     
     tpl_path = os.sep.join([conf["TPL_ROOT"], "web",  tpl_group, \
         "%s_mako.%s" % (tpl_name, file_type) ])
+        
+    if file_type in {"coffee":0,"js":1}:
+        out_path = os.sep.join([conf["OUT_ROOT"], "web", table_name, "app", \
+            "%s.%s" % (tpl_name, file_type) ])
+            
+    else:
     
-    out_path = os.sep.join([conf["OUT_ROOT"], "web", table_name, \
-        "%s.%s" % (tpl_name, file_type) ])
+        out_path = os.sep.join([conf["OUT_ROOT"], "web", table_name, \
+            "%s.%s" % (tpl_name, file_type) ])
 
     #print(tpl_path)
     #print(out_path)
@@ -138,9 +155,9 @@ def gen_web(conf, table_meta):
     templates = [
                     #("html","index"),
                     ("coffee", "form2"),  
-                    ("coffee","table"),
-                    ("coffee","app"),
-                    #("html","list"),
+                    ("coffee", "table"),
+                    ("coffee", "app"),
+                    ("html", "index"),
                     #("js","list"),
                     #("html","form"),
                     #("js","form")
