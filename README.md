@@ -7,6 +7,13 @@ generate code from json model to pg ddl, pg function, javascript and html, etc.
 
 Domain-Driven in future.
 
+
+- Executable Schema
+- Declarative Behavior
+
+
+
+
 Features
 ========
 
