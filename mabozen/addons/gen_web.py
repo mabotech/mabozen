@@ -111,7 +111,7 @@ def gen_code(conf,  tpl_group, tpl_name, table_meta):
     tpl_path = os.sep.join([conf["TPL_ROOT"], "web",  tpl_group, \
         "%s_mako.%s" % (tpl_name, file_type) ])
         
-    if file_type in {"coffee":0,"js":1}:
+    if file_type in {"coffee":0,"js":1, "json":2}:
         out_path = os.sep.join([conf["OUT_ROOT"], "web", table_name, "app", \
             "%s.%s" % (tpl_name, file_type) ])
             
@@ -158,6 +158,7 @@ def gen_web(conf, table_meta):
                     ("coffee", "table"),
                     ("coffee", "app"),
                     ("html", "index"),
+                    ("json", "json_schema")
                     #("js","list"),
                     #("html","form"),
                     #("js","form")

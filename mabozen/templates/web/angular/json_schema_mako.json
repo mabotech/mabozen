@@ -1,0 +1,15 @@
+{
+   "title": "${class_name}",
+   "type": "object",
+   "properties": {
+<%
+# string, intrger...       
+%>
+%for prop in attrs:
+        ${prop["column"]} : {
+            "type":${prop["type"]}        
+        }
+%endfor     
+      
+    }
+}
