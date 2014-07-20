@@ -1,0 +1,13 @@
+
+[app]
+name = "mabozen"
+
+[db]
+
+url = "pg://"
+
+[output]
+  [output.redis]
+    enabled = true
+[type]
+type = [1,2,3]
